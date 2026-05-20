@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+.pytest_cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# SQLite
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+*.xcworkspace/xcuserdata/
+ios/PokeScan.xcodeproj/project.xcworkspace/xcuserdata/
+ios/PokeScan.xcodeproj/xcuserdata/
+
+# Backend output files
+backend/pokescan.db
+backend/tool-results/
+backend/.coverage
+backend/htmlcov/
+
+# Test data (large card images)
+# (kept for now, but excluded from production builds)
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Claude artifacts
+.claude/
