@@ -77,13 +77,19 @@ if let cg35 = cropTop(ciImage, fraction: 0.35) {
     addResults(ocr(cg35), "crop35")
 }
 
-// Full image fallback only if combined title-band OCR returned too little alpha content
-let alphaCount = allLines.map { $0.text }.joined().filter { $0.isLetter }.count
-if alphaCount < 4 {
-    addResults(ocr(cgImage), "full")
+// NOTE: full-image fallback intentionally disabled. When the title band has no readable
+// text, the full-image OCR returns rules text, attack names, and set logos — which create
+// confident-but-wrong matches against the canonical name dictionary. Better to fail loudly
+// (routing the user to manual entry) than auto-confirm garbage.
+
+// Filter: drop low-confidence "full" pass lines (rules text, set logos, attack names).
+// Title-band lines pass through even at low confidence — they're more likely to be the card name.
+let filtered = allLines.filter { line in
+    if line.source == "full" { return line.confidence >= 0.5 }
+    return true
 }
 
 // Emit "TEXT|confidence|source" per line so the backend can use OCR confidence in ranking
-for line in allLines {
+for line in filtered {
     print("\(line.text)|\(String(format: "%.2f", line.confidence))|\(line.source)")
 }

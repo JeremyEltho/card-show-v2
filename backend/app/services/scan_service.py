@@ -21,6 +21,7 @@ from sqlalchemy import text, select
 from app.models.card_cache import CardCache
 from app.services.card_service import _api_card_to_row, _search_api
 from app.services.price_service import get_price
+from app.services.name_validator import NameValidator
 
 
 def _clean_line(line: str) -> str:
@@ -215,8 +216,36 @@ async def identify_card(
     Tries each OCR candidate line (best-ranked first), keeping the highest-scoring match
     across all candidates. Multi-line OCR commonly puts noise (energy type, HP, set codes)
     before the actual card name.
+
+    Pipeline:
+      1. Extract OCR candidate lines (multi-line, camelcase-split, word-by-word).
+      2. Pass each candidate through NameValidator (exact + rapidfuzz against 5,437 known names).
+         Validated candidates get prepended at the front of the search list, so corrected
+         names like "Charmander" (from OCR "@harmander") get searched before raw garbage.
+      3. FTS5 + Jaro-Winkler against cached card data.
+      4. Fall back to pokemontcg.io API search with prefix-truncated forms.
     """
-    candidates = _candidate_lines(ocr_text or "")
+    raw_candidates = _candidate_lines(ocr_text or "")
+
+    # --- NEW: validate + correct against canonical Pokémon name dictionary ---
+    validator = NameValidator.get()
+    validated_candidates: list[str] = []
+    seen_validated: set[str] = set()
+    for cand in raw_candidates[:8]:
+        result = validator.validate(cand)
+        if result.matched and result.canonical_name:
+            key = result.canonical_name.lower()
+            if key not in seen_validated:
+                seen_validated.add(key)
+                validated_candidates.append(result.canonical_name)
+
+    # Build the final search list: corrected names first, then raw candidates as backup
+    candidates: list[str] = []
+    seen_all: set[str] = set()
+    for c in validated_candidates + raw_candidates:
+        if c.lower() not in seen_all:
+            seen_all.add(c.lower())
+            candidates.append(c)
 
     best_match: dict | None = None
     best_score = 0.0
