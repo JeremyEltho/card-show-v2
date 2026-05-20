@@ -1,0 +1,53 @@
+name: PokeScan
+options:
+  bundleIdPrefix: com.pokescan
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    MARKETING_VERSION: "2.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    INFOPLIST_FILE: PokeScan/Resources/Info.plist
+    PRODUCT_BUNDLE_IDENTIFIER: com.pokescan.app
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+    ENABLE_PREVIEWS: YES
+
+targets:
+  PokeScan:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: PokeScan
+        excludes:
+          - "**/*.md"
+    resources:
+      - path: PokeScan/Resources/Assets.xcassets
+      - path: PokeScan/Resources/card_names_cache.json
+    info:
+      path: PokeScan/Resources/Info.plist
+      properties:
+        CFBundleName: PokeScan
+        CFBundleDisplayName: PokeScan
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "2.0.0"
+        NSCameraUsageDescription: "PokeScan uses your camera to identify Pokémon cards in real time."
+        NSPhotoLibraryUsageDescription: "PokeScan can save card images to your photo library."
+        UILaunchScreen:
+          UIColorName: ""
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UIRequiredDeviceCapabilities:
+          - armv7
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
