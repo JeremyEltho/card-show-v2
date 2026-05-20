@@ -7,69 +7,41 @@ struct ScannerView: View {
 
     var body: some View {
         ZStack {
-            // Camera preview
+            // Camera preview fills the entire screen
             CameraPreviewView(layer: vm.previewLayer)
                 .ignoresSafeArea()
 
-            // Card overlay
+            // Dark overlay outside the card frame
+            Color.black.opacity(0.30)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+
+            // Card detection overlay with confidence-coloured border
             CardOverlayView(cardRect: vm.cardOverlayRect, scanState: vm.scanState)
                 .ignoresSafeArea()
+                .allowsHitTesting(false)
 
-            // Top bar
+            // Top brand bar
             VStack {
-                HStack {
-                    Image(systemName: "sparkles")
-                        .foregroundStyle(.yellow)
-                    Text("PokeScan")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                    Spacer()
-                    if !appState.activeShowName.isEmpty {
-                        Text(appState.activeShowName)
-                            .font(.caption)
-                            .foregroundStyle(.white.opacity(0.7))
-                            .lineLimit(1)
-                    }
-                }
-                .padding()
-                .background(.ultraThinMaterial)
+                topBar
                 Spacer()
+                bottomHint
             }
 
-            // Undo banner (auto-confirm)
+            // Auto-confirm success banner — slides up from bottom
             if vm.undoAvailable, case .autoConfirmed(let match) = vm.scanState {
                 VStack {
                     Spacer()
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Logged: \(match.name)")
-                                .font(.subheadline).fontWeight(.semibold)
-                            if let price = match.marketPrice {
-                                Text(String(format: "$%.2f", price))
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
-                        }
-                        Spacer()
-                        Button("Undo") {
-                            Task { await vm.undoLastLog() }
-                        }
-                        .font(.subheadline).fontWeight(.semibold)
-                        .foregroundStyle(.red)
-                    }
-                    .padding()
-                    .background(.regularMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.horizontal)
-                    .padding(.bottom, 100)
+                    autoConfirmBanner(match)
+                        .padding(.horizontal, Theme.Spacing.md)
+                        .padding(.bottom, 100)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: vm.undoAvailable)
             }
         }
         .sheet(isPresented: Binding(
-            get: {
-                if case .awaitingConfirmation = vm.scanState { return true }
-                return false
-            },
+            get: { if case .awaitingConfirmation = vm.scanState { return true }; return false },
             set: { if !$0 { vm.dismissAndReset() } }
         )) {
             if case .awaitingConfirmation(let match) = vm.scanState {
@@ -82,6 +54,7 @@ struct ScannerView: View {
                     onReject: { vm.dismissAndReset() }
                 )
                 .presentationDetents([.medium, .large])
+                .presentationBackground(Theme.Colors.bg)
             }
         }
         .sheet(isPresented: Binding(
@@ -93,18 +66,115 @@ struct ScannerView: View {
                     Task { await vm.confirmCard(match, price: match.marketPrice, condition: "near_mint", status: "bought", sourceLocation: appState.activeShowName) }
                 }
                 .presentationDetents([.medium, .large])
+                .presentationBackground(Theme.Colors.bg)
             }
         }
-        .task {
-            await vm.startCamera()
+        .task { await vm.startCamera() }
+        .onDisappear { Task { await vm.stopCamera() } }
+    }
+
+    // MARK: - Top bar
+
+    private var topBar: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: "rectangle.dashed.badge.record")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(Theme.Colors.amber)
+            Text("CARDSHOW PRO")
+                .font(Theme.Typography.label)
+                .tracking(2)
+                .foregroundStyle(Theme.Colors.textPrimary)
+            Spacer()
+            if !appState.activeShowName.isEmpty {
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(Theme.Colors.green)
+                        .frame(width: 6, height: 6)
+                    Text(appState.activeShowName.uppercased())
+                        .font(Theme.Typography.label)
+                        .tracking(1)
+                        .foregroundStyle(Theme.Colors.green)
+                }
+            }
         }
-        .onDisappear {
-            Task { await vm.stopCamera() }
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm)
+        .background(.ultraThinMaterial)
+    }
+
+    // MARK: - Bottom hint
+
+    private var bottomHint: some View {
+        Group {
+            switch vm.scanState {
+            case .idle, .scanning:
+                Text(vm.cardOverlayRect == nil ? "POINT AT A CARD" : "HOLD STEADY…")
+                    .font(Theme.Typography.label)
+                    .tracking(2)
+                    .foregroundStyle(Theme.Colors.textSecondary)
+                    .padding(.horizontal, Theme.Spacing.md)
+                    .padding(.vertical, Theme.Spacing.sm)
+                    .background(Capsule().fill(Color.black.opacity(0.5)))
+                    .padding(.bottom, 24)
+            default:
+                EmptyView()
+            }
         }
+    }
+
+    // MARK: - Auto-confirm banner
+
+    private func autoConfirmBanner(_ match: CardMatch) -> some View {
+        HStack(spacing: Theme.Spacing.md) {
+            ZStack {
+                Circle()
+                    .fill(Theme.Colors.greenSoft)
+                    .frame(width: 36, height: 36)
+                Image(systemName: "checkmark")
+                    .font(.system(size: 16, weight: .heavy))
+                    .foregroundStyle(Theme.Colors.green)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("LOGGED")
+                    .font(Theme.Typography.label)
+                    .tracking(1)
+                    .foregroundStyle(Theme.Colors.green)
+                HStack(spacing: 6) {
+                    Text(match.name)
+                        .font(Theme.Typography.title)
+                        .foregroundStyle(Theme.Colors.textPrimary)
+                    if let price = match.marketPrice {
+                        Text(String(format: "$%.0f", price))
+                            .font(Theme.Typography.priceSm)
+                            .foregroundStyle(Theme.Colors.amber)
+                    }
+                }
+            }
+
+            Spacer()
+
+            Button {
+                Task { await vm.undoLastLog() }
+            } label: {
+                Text("UNDO")
+                    .font(Theme.Typography.label)
+                    .tracking(1)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Capsule().fill(Theme.Colors.redSoft))
+                    .foregroundStyle(Theme.Colors.red)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(Theme.Spacing.md)
+        .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg))
     }
 }
 
 // MARK: - Camera preview UIViewRepresentable
+
 struct CameraPreviewView: UIViewRepresentable {
     let layer: AVCaptureVideoPreviewLayer?
 
@@ -123,7 +193,8 @@ struct CameraPreviewView: UIViewRepresentable {
     }
 }
 
-// MARK: - Manual assist sheet
+// MARK: - Manual assist sheet (dark-themed)
+
 struct ManualAssistView: View {
     let ocrHint: String
     let onSelect: (CardMatch) -> Void
@@ -131,6 +202,7 @@ struct ManualAssistView: View {
     @State private var searchText: String
     @State private var results: [CardSearchResult] = []
     @State private var isSearching = false
+    @Environment(\.dismiss) private var dismiss
 
     private let network = NetworkService.shared
 
@@ -142,57 +214,102 @@ struct ManualAssistView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                VStack(spacing: 8) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .foregroundStyle(.red)
-                        Text("Couldn't identify card")
-                            .fontWeight(.semibold)
+            ZStack {
+                Theme.Colors.bg.ignoresSafeArea()
+
+                VStack(spacing: 0) {
+                    VStack(spacing: Theme.Spacing.sm) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(Theme.Colors.amber)
+                            Text("COULDN'T IDENTIFY")
+                                .font(Theme.Typography.label)
+                                .tracking(1)
+                                .foregroundStyle(Theme.Colors.amber)
+                        }
+                        if !ocrHint.isEmpty {
+                            Text("OCR read: \"\(ocrHint)\"")
+                                .font(Theme.Typography.captionMono)
+                                .foregroundStyle(Theme.Colors.textTertiary)
+                        }
                     }
-                    Text("OCR read: \"\(ocrHint)\" — correct it below")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .padding()
+                    .padding(.top, Theme.Spacing.md)
+                    .padding(.bottom, Theme.Spacing.md)
 
-                TextField("Search card name", text: $searchText)
-                    .textFieldStyle(.roundedBorder)
-                    .padding(.horizontal)
-                    .onChange(of: searchText) { _, q in
-                        Task { await search(q) }
+                    TextField("Search card name", text: $searchText)
+                        .font(Theme.Typography.body)
+                        .foregroundStyle(Theme.Colors.textPrimary)
+                        .padding(Theme.Spacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: Theme.Radius.md)
+                                .fill(Theme.Colors.surface)
+                        )
+                        .padding(.horizontal, Theme.Spacing.md)
+                        .onChange(of: searchText) { _, q in
+                            Task { await search(q) }
+                        }
+
+                    if isSearching {
+                        ProgressView()
+                            .tint(Theme.Colors.amber)
+                            .padding()
                     }
 
-                if isSearching {
-                    ProgressView().padding()
-                }
-
-                List(results) { card in
-                    Button {
-                        onSelect(CardMatch(
-                            cardId: card.id, name: card.name,
-                            setName: card.setName, number: card.number,
-                            imageUrlSm: card.imageUrlSm,
-                            confidence: 1.0, marketPrice: nil, pipeline: "manual"
-                        ))
-                    } label: {
-                        HStack {
-                            if let url = card.imageUrlSm.flatMap(URL.init) {
-                                AsyncImage(url: url) { img in img.resizable().aspectRatio(contentMode: .fit) }
-                                    placeholder: { Color.secondary.opacity(0.2) }
-                                    .frame(width: 40, height: 56)
-                                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                            }
-                            VStack(alignment: .leading) {
-                                Text(card.name).fontWeight(.medium)
-                                if let set = card.setName { Text(set).font(.caption).foregroundStyle(.secondary) }
+                    ScrollView {
+                        LazyVStack(spacing: Theme.Spacing.sm) {
+                            ForEach(results) { card in
+                                Button {
+                                    onSelect(CardMatch(
+                                        cardId: card.id, name: card.name,
+                                        setName: card.setName, number: card.number,
+                                        imageUrlSm: card.imageUrlSm,
+                                        confidence: 1.0, marketPrice: nil, pipeline: "manual"
+                                    ))
+                                    dismiss()
+                                } label: {
+                                    HStack(spacing: Theme.Spacing.md) {
+                                        if let url = card.imageUrlSm.flatMap(URL.init) {
+                                            AsyncImage(url: url) { img in
+                                                img.resizable().aspectRatio(contentMode: .fill)
+                                            } placeholder: {
+                                                Theme.Colors.surfaceHi
+                                            }
+                                            .frame(width: 40, height: 56)
+                                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                                        }
+                                        VStack(alignment: .leading) {
+                                            Text(card.name)
+                                                .font(Theme.Typography.body)
+                                                .foregroundStyle(Theme.Colors.textPrimary)
+                                            if let set = card.setName {
+                                                Text(set)
+                                                    .font(Theme.Typography.caption)
+                                                    .foregroundStyle(Theme.Colors.textTertiary)
+                                            }
+                                        }
+                                        Spacer()
+                                    }
+                                    .padding(Theme.Spacing.md)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: Theme.Radius.md)
+                                            .fill(Theme.Colors.surface)
+                                    )
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
+                        .padding(Theme.Spacing.md)
                     }
                 }
             }
             .navigationTitle("Manual Search")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                        .foregroundStyle(Theme.Colors.textSecondary)
+                }
+            }
         }
         .task { await search(ocrHint) }
     }

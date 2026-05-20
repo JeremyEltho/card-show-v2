@@ -61,7 +61,7 @@ actor AuthService {
     func logout(network: NetworkService) async {
         if let refresh = keychain.get("refresh_token") {
             let body = ["refresh_token": refresh]
-            try? await network.post("/auth/logout", body: body, authenticated: false) as EmptyResponse
+            _ = try? await network.post("/auth/logout", body: body, authenticated: false) as EmptyResponse
         }
         clearTokens()
         currentUser = nil

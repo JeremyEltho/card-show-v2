@@ -5,75 +5,139 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var showRegister = false
+    @FocusState private var focusedField: Field?
+
+    enum Field { case email, password }
+
+    private var canSubmit: Bool {
+        !email.isEmpty && password.count >= 8 && !authVM.isLoading
+    }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Header
-                VStack(spacing: 12) {
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 56))
-                        .foregroundStyle(.yellow)
-                    Text("PokeScan")
-                        .font(.system(size: 36, weight: .black, design: .rounded))
-                    Text("Card Scanner & Inventory")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .padding(.top, 60)
-                .padding(.bottom, 48)
+            ZStack {
+                Theme.Colors.bg.ignoresSafeArea()
 
-                // Form
-                VStack(spacing: 16) {
-                    TextField("Email", text: $email)
-                        .textContentType(.emailAddress)
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
-                        .textFieldStyle(.roundedBorder)
+                VStack(spacing: 0) {
+                    Spacer()
 
-                    SecureField("Password", text: $password)
-                        .textContentType(.password)
-                        .textFieldStyle(.roundedBorder)
-
-                    if let error = authVM.errorMessage {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                            .multilineTextAlignment(.center)
+                    VStack(spacing: Theme.Spacing.md) {
+                        Image(systemName: "rectangle.dashed.badge.record")
+                            .font(.system(size: 64, weight: .light))
+                            .foregroundStyle(Theme.Colors.amber)
+                        Text("CARDSHOW PRO")
+                            .font(.system(size: 28, weight: .heavy, design: .rounded))
+                            .tracking(4)
+                            .foregroundStyle(Theme.Colors.textPrimary)
+                        Text("Card scanner for vendors")
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(Theme.Colors.textTertiary)
                     }
+                    .padding(.bottom, 48)
 
-                    Button(action: {
-                        Task { await authVM.login(email: email, password: password) }
-                    }) {
-                        Group {
-                            if authVM.isLoading {
-                                ProgressView().tint(.white)
-                            } else {
-                                Text("Sign In")
-                                    .fontWeight(.semibold)
+                    VStack(spacing: Theme.Spacing.md) {
+                        DarkTextField(placeholder: "Email", text: $email,
+                                      keyboard: .emailAddress, isSecure: false,
+                                      icon: "envelope.fill")
+                            .focused($focusedField, equals: .email)
+                            .submitLabel(.next)
+                            .onSubmit { focusedField = .password }
+
+                        DarkTextField(placeholder: "Password", text: $password,
+                                      isSecure: true, icon: "lock.fill")
+                            .focused($focusedField, equals: .password)
+                            .submitLabel(.go)
+                            .onSubmit {
+                                Task { await authVM.login(email: email, password: password) }
                             }
+
+                        if let error = authVM.errorMessage {
+                            HStack(spacing: 6) {
+                                Image(systemName: "exclamationmark.circle.fill")
+                                Text(error)
+                            }
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(Theme.Colors.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(Color.accentColor)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                        Button {
+                            Task { await authVM.login(email: email, password: password) }
+                        } label: {
+                            Group {
+                                if authVM.isLoading {
+                                    ProgressView().tint(.black)
+                                } else {
+                                    Text("SIGN IN")
+                                        .font(Theme.Typography.title)
+                                        .tracking(2)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 54)
+                            .background(canSubmit ? Theme.Colors.amber : Theme.Colors.surfaceHi)
+                            .foregroundStyle(canSubmit ? .black : Theme.Colors.textDisabled)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg))
+                        }
+                        .disabled(!canSubmit)
                     }
-                    .disabled(authVM.isLoading || email.isEmpty || password.isEmpty)
-                }
-                .padding(.horizontal, 32)
+                    .padding(.horizontal, Theme.Spacing.lg)
 
-                Spacer()
+                    Spacer()
 
-                Button("Don't have an account? Sign Up") {
-                    showRegister = true
+                    Button {
+                        showRegister = true
+                    } label: {
+                        Text("New here? **Create account**")
+                            .font(Theme.Typography.body)
+                            .foregroundStyle(Theme.Colors.textSecondary)
+                    }
+                    .padding(.bottom, Theme.Spacing.lg)
                 }
-                .font(.footnote)
-                .padding(.bottom, 32)
             }
             .navigationDestination(isPresented: $showRegister) {
                 RegisterView()
             }
         }
+        .preferredColorScheme(.dark)
+    }
+}
+
+struct DarkTextField: View {
+    let placeholder: String
+    @Binding var text: String
+    var keyboard: UIKeyboardType = .default
+    var isSecure: Bool = false
+    var icon: String
+
+    var body: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundStyle(Theme.Colors.textTertiary)
+                .frame(width: 20)
+            if isSecure {
+                SecureField(placeholder, text: $text)
+                    .textContentType(.password)
+                    .foregroundStyle(Theme.Colors.textPrimary)
+            } else {
+                TextField(placeholder, text: $text)
+                    .keyboardType(keyboard)
+                    .autocapitalization(.none)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .foregroundStyle(Theme.Colors.textPrimary)
+            }
+        }
+        .font(Theme.Typography.body)
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.Radius.md)
+                .fill(Theme.Colors.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.Radius.md)
+                        .stroke(Theme.Colors.border, lineWidth: 1)
+                )
+        )
     }
 }

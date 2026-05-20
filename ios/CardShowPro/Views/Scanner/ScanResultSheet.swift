@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Shown when card scan confidence is 80-94% — vendor must confirm before logging.
 struct ScanResultSheet: View {
     let match: CardMatch
     let isAwaitingConfirmation: Bool
@@ -7,152 +8,185 @@ struct ScanResultSheet: View {
     let onReject: () -> Void
 
     @Environment(AppState.self) private var appState
-    @State private var selectedCondition = CardCondition.near_mint
+    @Environment(\.dismiss) private var dismiss
     @State private var selectedStatus = CardStatus.bought
     @State private var customPrice: String = ""
 
     private var displayPrice: String {
         if let p = match.marketPrice { return String(format: "$%.2f", p) }
-        return "Price unavailable"
+        return "—"
     }
 
-    private var confidenceBadgeColor: Color {
-        match.confidence >= 0.95 ? .green : match.confidence >= 0.80 ? .yellow : .orange
+    private var confidencePct: Int { Int(match.confidence * 100) }
+    private var confidenceTint: Color {
+        match.confidence >= 0.95 ? Theme.Colors.green
+            : match.confidence >= 0.80 ? Theme.Colors.amber
+            : Theme.Colors.red
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Handle bar
-            Capsule()
-                .fill(Color.secondary.opacity(0.4))
-                .frame(width: 40, height: 4)
-                .padding(.top, 12)
+        ZStack {
+            Theme.Colors.bg.ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 20) {
-                    // Card image + info
-                    HStack(spacing: 16) {
-                        if let urlStr = match.imageUrlSm, let url = URL(string: urlStr) {
-                            AsyncImage(url: url) { img in
-                                img.resizable().aspectRatio(contentMode: .fit)
-                            } placeholder: {
-                                RoundedRectangle(cornerRadius: 8).fill(Color.secondary.opacity(0.2))
-                            }
-                            .frame(width: 80, height: 112)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                        } else {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.secondary.opacity(0.15))
-                                .frame(width: 80, height: 112)
-                                .overlay(Image(systemName: "photo").foregroundStyle(.secondary))
-                        }
+                VStack(spacing: Theme.Spacing.lg) {
+                    // Confidence header
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(confidenceTint)
+                            .frame(width: 8, height: 8)
+                        Text("\(confidencePct)% MATCH")
+                            .font(Theme.Typography.label)
+                            .tracking(1)
+                            .foregroundStyle(confidenceTint)
+                    }
+                    .padding(.top, Theme.Spacing.md)
 
-                        VStack(alignment: .leading, spacing: 6) {
+                    // Card image + info
+                    VStack(spacing: Theme.Spacing.md) {
+                        cardImage
+                            .frame(width: 140, height: 196)
+                            .shadow(color: .black.opacity(0.4), radius: 16, y: 8)
+
+                        VStack(spacing: 4) {
                             Text(match.name)
-                                .font(.headline)
-                                .lineLimit(2)
+                                .font(Theme.Typography.headline)
+                                .foregroundStyle(Theme.Colors.textPrimary)
+                                .multilineTextAlignment(.center)
                             if let set = match.setName {
                                 Text(set)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
+                                    .font(Theme.Typography.caption)
+                                    .foregroundStyle(Theme.Colors.textSecondary)
                             }
-                            if let num = match.number {
-                                Text("#\(num)")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
+                        }
+
+                        // Market price — big amber number
+                        VStack(spacing: 2) {
+                            Text("MARKET PRICE")
+                                .font(Theme.Typography.label)
+                                .tracking(1)
+                                .foregroundStyle(Theme.Colors.textTertiary)
                             Text(displayPrice)
-                                .font(.title3)
-                                .fontWeight(.bold)
-                                .foregroundStyle(.green)
-
-                            // Confidence badge
-                            HStack(spacing: 4) {
-                                Circle()
-                                    .fill(confidenceBadgeColor)
-                                    .frame(width: 8, height: 8)
-                                Text("\(Int(match.confidence * 100))% match")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
+                                .font(Theme.Typography.priceLg)
+                                .foregroundStyle(Theme.Colors.amber)
                         }
-                        Spacer()
                     }
-                    .padding(.horizontal)
 
-                    Divider()
+                    // Buy / Sell toggle — segmented control
+                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                        Text("ACTION")
+                            .font(Theme.Typography.label)
+                            .tracking(1)
+                            .foregroundStyle(Theme.Colors.textTertiary)
 
-                    // Status + condition pickers
-                    VStack(spacing: 14) {
-                        Picker("Status", selection: $selectedStatus) {
-                            ForEach(CardStatus.allCases, id: \.self) { s in
-                                Text(s.displayName).tag(s)
-                            }
+                        HStack(spacing: 0) {
+                            actionButton("BUY", status: .bought, tint: Theme.Colors.blue)
+                            actionButton("SELL", status: .sold, tint: Theme.Colors.green)
                         }
-                        .pickerStyle(.segmented)
+                        .background(
+                            RoundedRectangle(cornerRadius: Theme.Radius.md)
+                                .fill(Theme.Colors.surface)
+                        )
+                    }
 
-                        Picker("Condition", selection: $selectedCondition) {
-                            ForEach([CardCondition.mint, .near_mint, .lightly_played, .moderately_played], id: \.self) { c in
-                                Text(c.displayName).tag(c)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                        HStack {
-                            Text("Price paid ($)")
-                            Spacer()
-                            TextField("Market price", text: $customPrice)
+                    // Price input
+                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                        Text(selectedStatus == .bought ? "PAID" : "SOLD FOR")
+                            .font(Theme.Typography.label)
+                            .tracking(1)
+                            .foregroundStyle(Theme.Colors.textTertiary)
+                        HStack(alignment: .firstTextBaseline, spacing: 4) {
+                            Text("$")
+                                .font(Theme.Typography.priceLg)
+                                .foregroundStyle(Theme.Colors.textSecondary)
+                            TextField("0.00", text: $customPrice)
                                 .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 100)
+                                .font(Theme.Typography.priceLg)
+                                .foregroundStyle(selectedStatus == .bought ? Theme.Colors.blue : Theme.Colors.green)
                         }
+                        .padding(Theme.Spacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: Theme.Radius.md)
+                                .fill(Theme.Colors.surface)
+                        )
+                    }
 
-                        if !appState.activeShowName.isEmpty {
-                            HStack {
-                                Image(systemName: "mappin.circle")
-                                    .foregroundStyle(.secondary)
-                                Text(appState.activeShowName)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                    // Log button — primary action
+                    Button {
+                        let price = Double(customPrice) ?? match.marketPrice
+                        onConfirm(price, "near_mint", selectedStatus.rawValue)
+                        dismiss()
+                    } label: {
+                        Text("LOG \(selectedStatus == .bought ? "BUY" : "SELL")")
+                            .font(Theme.Typography.title)
+                            .tracking(2)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 56)
+                            .background(Theme.Colors.amber)
+                            .foregroundStyle(.black)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg))
+                    }
+
+                    if isAwaitingConfirmation {
+                        Button {
+                            onReject()
+                            dismiss()
+                        } label: {
+                            Text("Not this card — search manually")
+                                .font(Theme.Typography.body)
+                                .foregroundStyle(Theme.Colors.textTertiary)
                         }
                     }
-                    .padding(.horizontal)
-
-                    // Action buttons
-                    VStack(spacing: 10) {
-                        Button(action: {
-                            let price = Double(customPrice) ?? match.marketPrice
-                            onConfirm(price, selectedCondition.rawValue, selectedStatus.rawValue)
-                        }) {
-                            Label("Log Card", systemImage: "plus.circle.fill")
-                                .fontWeight(.semibold)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 50)
-                                .background(Color.accentColor)
-                                .foregroundStyle(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
-
-                        if isAwaitingConfirmation {
-                            Button("Not Right — Search Again", action: onReject)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 32)
                 }
-                .padding(.top, 16)
+                .padding(Theme.Spacing.lg)
+                .padding(.bottom, Theme.Spacing.lg)
             }
         }
         .onAppear {
-            // Pre-fill with market price
             if let price = match.marketPrice {
                 customPrice = String(format: "%.2f", price)
             }
         }
+    }
+
+    @ViewBuilder
+    private var cardImage: some View {
+        if let urlStr = match.imageUrlSm, let url = URL(string: urlStr) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let img): img.resizable().aspectRatio(contentMode: .fit)
+                default: Theme.Colors.surface
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+        } else {
+            RoundedRectangle(cornerRadius: Theme.Radius.md)
+                .fill(Theme.Colors.surface)
+                .overlay(
+                    Image(systemName: "rectangle.portrait")
+                        .font(.system(size: 32))
+                        .foregroundStyle(Theme.Colors.textTertiary)
+                )
+        }
+    }
+
+    private func actionButton(_ label: String, status: CardStatus, tint: Color) -> some View {
+        Button {
+            selectedStatus = status
+        } label: {
+            Text(label)
+                .font(Theme.Typography.label)
+                .tracking(2)
+                .frame(maxWidth: .infinity)
+                .frame(height: 48)
+                .background(selectedStatus == status ? tint.opacity(0.2) : Color.clear)
+                .foregroundStyle(selectedStatus == status ? tint : Theme.Colors.textTertiary)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.Radius.md)
+                        .stroke(selectedStatus == status ? tint : Color.clear, lineWidth: 1.5)
+                )
+        }
+        .buttonStyle(.plain)
+        .padding(2)
     }
 }

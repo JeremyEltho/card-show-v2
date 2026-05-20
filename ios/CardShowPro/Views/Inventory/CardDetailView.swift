@@ -5,132 +5,130 @@ struct CardDetailView: View {
     let vm: InventoryViewModel
 
     @State private var showSellSheet = false
-    @State private var salePrice = ""
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                // Card image
-                if let url = item.card?.imageUrlSm.flatMap(URL.init) {
-                    AsyncImage(url: url) { img in img.resizable().aspectRatio(contentMode: .fit) }
-                        placeholder: { Color.secondary.opacity(0.1) }
-                        .frame(maxWidth: 200)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .shadow(radius: 8)
-                }
+        ZStack {
+            Theme.Colors.bg.ignoresSafeArea()
 
-                // Card name + set
-                VStack(spacing: 4) {
-                    Text(item.card?.name ?? item.cardId)
-                        .font(.title2.bold())
-                    if let set = item.card?.setName {
-                        Text(set).font(.subheadline).foregroundStyle(.secondary)
+            ScrollView {
+                VStack(spacing: Theme.Spacing.lg) {
+                    // Hero image
+                    if let url = item.card?.imageUrlSm.flatMap(URL.init) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let img): img.resizable().aspectRatio(contentMode: .fit)
+                            default: Theme.Colors.surface
+                            }
+                        }
+                        .frame(maxWidth: 220)
+                        .frame(maxHeight: 308)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+                        .shadow(color: .black.opacity(0.5), radius: 24, y: 12)
+                        .padding(.top, Theme.Spacing.md)
                     }
-                }
 
-                // Price + gain row
-                HStack(spacing: 32) {
-                    VStack {
-                        Text("Market").font(.caption).foregroundStyle(.secondary)
-                        Text(item.card?.marketPrice.map { String(format: "$%.2f", $0) } ?? "—")
-                            .font(.headline)
+                    // Name + set
+                    VStack(spacing: Theme.Spacing.xs) {
+                        Text(item.card?.name ?? item.cardId)
+                            .font(Theme.Typography.headline)
+                            .foregroundStyle(Theme.Colors.textPrimary)
+                            .multilineTextAlignment(.center)
+                        if let set = item.card?.setName {
+                            Text(set)
+                                .font(Theme.Typography.body)
+                                .foregroundStyle(Theme.Colors.textSecondary)
+                        }
+                        StatusPill(status: item.status)
+                            .padding(.top, 4)
                     }
-                    if let purchase = item.purchasePrice {
-                        VStack {
-                            Text("Paid").font(.caption).foregroundStyle(.secondary)
-                            Text(String(format: "$%.2f", purchase)).font(.headline)
+
+                    // Price tiles
+                    HStack(spacing: Theme.Spacing.sm) {
+                        if let market = item.card?.marketPrice {
+                            priceTile("MARKET", String(format: "$%.2f", market), tint: Theme.Colors.amber)
+                        }
+                        if let purchase = item.purchasePrice {
+                            priceTile("PAID", String(format: "$%.2f", purchase), tint: Theme.Colors.blue)
+                        }
+                        if let sale = item.salePrice {
+                            priceTile("SOLD", String(format: "$%.2f", sale), tint: Theme.Colors.green)
                         }
                     }
-                    if let gain = item.unrealizedGain {
-                        VStack {
-                            Text("Gain").font(.caption).foregroundStyle(.secondary)
-                            Text(String(format: "%+.2f", gain))
-                                .font(.headline)
-                                .foregroundStyle(gain >= 0 ? .green : .red)
+
+                    // Details
+                    VStack(spacing: 0) {
+                        detailRow("Condition", item.condition.replacingOccurrences(of: "_", with: " ").capitalized)
+                        Divider().background(Theme.Colors.divider)
+                        detailRow("Quantity", "\(item.quantity)")
+                        if let loc = item.sourceLocation {
+                            Divider().background(Theme.Colors.divider)
+                            detailRow("Source", loc)
+                        }
+                        if let notes = item.notes {
+                            Divider().background(Theme.Colors.divider)
+                            detailRow("Notes", notes)
                         }
                     }
-                }
+                    .surfaceCard()
 
-                Divider()
-
-                // Details grid
-                Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 8) {
-                    GridRow {
-                        Text("Status").foregroundStyle(.secondary)
-                        StatusBadge(status: item.status)
-                    }
-                    GridRow {
-                        Text("Condition").foregroundStyle(.secondary)
-                        Text(item.condition.replacingOccurrences(of: "_", with: " ").capitalized)
-                    }
-                    GridRow {
-                        Text("Quantity").foregroundStyle(.secondary)
-                        Text("\(item.quantity)")
-                    }
-                    if let loc = item.sourceLocation {
-                        GridRow {
-                            Text("Source").foregroundStyle(.secondary)
-                            Text(loc)
-                        }
-                    }
-                    if let notes = item.notes {
-                        GridRow {
-                            Text("Notes").foregroundStyle(.secondary)
-                            Text(notes).lineLimit(3)
-                        }
-                    }
-                }
-                .font(.subheadline)
-                .padding(.horizontal)
-
-                // Sell button
-                if item.status != "sold" {
-                    Button(action: { showSellSheet = true }) {
-                        Label("Mark as Sold", systemImage: "dollarsign.circle")
-                            .fontWeight(.semibold)
+                    // Sell button
+                    if item.status == "bought" {
+                        Button { showSellSheet = true } label: {
+                            HStack {
+                                Image(systemName: "dollarsign.circle.fill")
+                                Text("MARK AS SOLD")
+                                    .font(Theme.Typography.title)
+                                    .tracking(1.5)
+                            }
                             .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(Color.green)
-                            .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .frame(height: 56)
+                            .background(Theme.Colors.green)
+                            .foregroundStyle(.black)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg))
+                        }
                     }
-                    .padding(.horizontal)
                 }
+                .padding(Theme.Spacing.md)
             }
-            .padding(.top)
         }
         .navigationTitle(item.card?.name ?? "Card")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showSellSheet) {
-            NavigationStack {
-                Form {
-                    Section("Sale Price") {
-                        TextField("Amount ($)", text: $salePrice)
-                            .keyboardType(.decimalPad)
-                    }
-                    Section {
-                        Button("Confirm Sale") {
-                            if let price = Double(salePrice) {
-                                Task { await vm.markSold(item: item, price: price) }
-                            }
-                            showSellSheet = false
-                        }
-                        .foregroundStyle(.green)
-                    }
-                }
-                .navigationTitle("Mark as Sold")
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { showSellSheet = false }
-                    }
+            SellSheet(item: item) { price in
+                Task {
+                    await vm.markSold(item: item, price: price)
+                    showSellSheet = false
                 }
             }
-            .presentationDetents([.medium])
         }
-        .onAppear {
-            if let price = item.card?.marketPrice {
-                salePrice = String(format: "%.2f", price)
-            }
+    }
+
+    private func priceTile(_ label: String, _ value: String, tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label)
+                .font(Theme.Typography.label)
+                .tracking(1)
+                .foregroundStyle(Theme.Colors.textTertiary)
+            Text(value)
+                .font(Theme.Typography.priceMd)
+                .foregroundStyle(tint)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .surfaceCard()
+    }
+
+    private func detailRow(_ label: String, _ value: String) -> some View {
+        HStack {
+            Text(label.uppercased())
+                .font(Theme.Typography.label)
+                .tracking(1)
+                .foregroundStyle(Theme.Colors.textTertiary)
+            Spacer()
+            Text(value)
+                .font(Theme.Typography.body)
+                .foregroundStyle(Theme.Colors.textPrimary)
+                .multilineTextAlignment(.trailing)
+        }
+        .padding(.vertical, 8)
     }
 }

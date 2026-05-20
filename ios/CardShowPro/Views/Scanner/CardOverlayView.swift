@@ -6,10 +6,10 @@ struct CardOverlayView: View {
 
     private var borderColor: Color {
         switch scanState {
-        case .autoConfirmed: return .green
-        case .awaitingConfirmation: return .yellow
-        case .manualAssist: return .red
-        case .scanning where cardRect != nil: return .white.opacity(0.8)
+        case .autoConfirmed: return Theme.Colors.green
+        case .awaitingConfirmation: return Theme.Colors.amber
+        case .manualAssist: return Theme.Colors.red
+        case .scanning where cardRect != nil: return Theme.Colors.amber
         default: return .clear
         }
     }
@@ -17,20 +17,14 @@ struct CardOverlayView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                // Guide frame when no card detected
+                // Guide frame when no card detected — corner brackets only
                 if cardRect == nil, case .scanning = scanState {
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.white.opacity(0.3), lineWidth: 2)
-                        .frame(width: geo.size.width * 0.7, height: geo.size.height * 0.5)
-                        .overlay(
-                            Text("Point at card")
-                                .font(.caption)
-                                .foregroundStyle(.white.opacity(0.6))
-                                .offset(y: geo.size.height * 0.28)
-                        )
+                    GuideFrame()
+                        .stroke(Theme.Colors.amber.opacity(0.6), lineWidth: 2)
+                        .frame(width: geo.size.width * 0.78, height: geo.size.width * 0.78 * 1.4)
                 }
 
-                // Card bounding box
+                // Card bounding box with confidence-coloured corners
                 if let rect = cardRect {
                     let flipped = CGRect(
                         x: rect.minX * geo.size.width,
@@ -38,13 +32,48 @@ struct CardOverlayView: View {
                         width: rect.width * geo.size.width,
                         height: rect.height * geo.size.height
                     )
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(borderColor, lineWidth: 3)
+                    CornerBrackets()
+                        .stroke(borderColor, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                         .frame(width: flipped.width, height: flipped.height)
                         .position(x: flipped.midX, y: flipped.midY)
                         .animation(.easeInOut(duration: 0.15), value: rect)
+                        .shadow(color: borderColor.opacity(0.5), radius: 8)
                 }
             }
         }
+    }
+}
+
+// MARK: - Corner brackets (4 L-shaped corners)
+
+struct CornerBrackets: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        let len = min(rect.width, rect.height) * 0.15
+
+        // Top-left
+        p.move(to: CGPoint(x: rect.minX, y: rect.minY + len))
+        p.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        p.addLine(to: CGPoint(x: rect.minX + len, y: rect.minY))
+        // Top-right
+        p.move(to: CGPoint(x: rect.maxX - len, y: rect.minY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.minY + len))
+        // Bottom-left
+        p.move(to: CGPoint(x: rect.minX, y: rect.maxY - len))
+        p.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        p.addLine(to: CGPoint(x: rect.minX + len, y: rect.maxY))
+        // Bottom-right
+        p.move(to: CGPoint(x: rect.maxX - len, y: rect.maxY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - len))
+
+        return p
+    }
+}
+
+struct GuideFrame: Shape {
+    func path(in rect: CGRect) -> Path {
+        CornerBrackets().path(in: rect)
     }
 }

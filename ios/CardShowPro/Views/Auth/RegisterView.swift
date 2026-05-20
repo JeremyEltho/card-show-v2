@@ -9,70 +9,72 @@ struct RegisterView: View {
     @State private var confirmPassword = ""
 
     private var passwordsMatch: Bool { password == confirmPassword }
-    private var canSubmit: Bool { !displayName.isEmpty && !email.isEmpty && password.count >= 8 && passwordsMatch && !authVM.isLoading }
+    private var canSubmit: Bool {
+        !displayName.isEmpty && !email.isEmpty && password.count >= 8
+            && passwordsMatch && !authVM.isLoading
+    }
 
     var body: some View {
-        VStack(spacing: 24) {
-            Text("Create Account")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .padding(.top, 32)
+        ZStack {
+            Theme.Colors.bg.ignoresSafeArea()
 
-            VStack(spacing: 14) {
-                TextField("Display Name", text: $displayName)
-                    .textContentType(.name)
-                    .textFieldStyle(.roundedBorder)
+            VStack(spacing: Theme.Spacing.lg) {
+                Text("CREATE ACCOUNT")
+                    .font(Theme.Typography.label)
+                    .tracking(3)
+                    .foregroundStyle(Theme.Colors.amber)
+                    .padding(.top, Theme.Spacing.lg)
 
-                TextField("Email", text: $email)
-                    .textContentType(.emailAddress)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .textFieldStyle(.roundedBorder)
+                VStack(spacing: Theme.Spacing.md) {
+                    DarkTextField(placeholder: "Your name", text: $displayName,
+                                  isSecure: false, icon: "person.fill")
+                    DarkTextField(placeholder: "Email", text: $email,
+                                  keyboard: .emailAddress, isSecure: false, icon: "envelope.fill")
+                    DarkTextField(placeholder: "Password (8+ chars)", text: $password,
+                                  isSecure: true, icon: "lock.fill")
+                    DarkTextField(placeholder: "Confirm password", text: $confirmPassword,
+                                  isSecure: true, icon: "lock.fill")
 
-                SecureField("Password (min 8 chars)", text: $password)
-                    .textContentType(.newPassword)
-                    .textFieldStyle(.roundedBorder)
-
-                SecureField("Confirm Password", text: $confirmPassword)
-                    .textContentType(.newPassword)
-                    .textFieldStyle(.roundedBorder)
-
-                if !confirmPassword.isEmpty && !passwordsMatch {
-                    Text("Passwords don't match")
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                }
-
-                if let error = authVM.errorMessage {
-                    Text(error)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .multilineTextAlignment(.center)
-                }
-            }
-            .padding(.horizontal, 32)
-
-            Button(action: {
-                Task {
-                    await authVM.register(email: email, password: password, displayName: displayName)
-                }
-            }) {
-                Group {
-                    if authVM.isLoading {
-                        ProgressView().tint(.white)
-                    } else {
-                        Text("Create Account").fontWeight(.semibold)
+                    if !confirmPassword.isEmpty && !passwordsMatch {
+                        Text("Passwords don't match")
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(Theme.Colors.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    if let error = authVM.errorMessage {
+                        Text(error)
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(Theme.Colors.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: 50)
-                .background(canSubmit ? Color.accentColor : Color.gray)
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            .disabled(!canSubmit)
-            .padding(.horizontal, 32)
+                .padding(.horizontal, Theme.Spacing.lg)
 
-            Spacer()
+                Button {
+                    Task {
+                        await authVM.register(email: email, password: password, displayName: displayName)
+                    }
+                } label: {
+                    Group {
+                        if authVM.isLoading {
+                            ProgressView().tint(.black)
+                        } else {
+                            Text("CREATE ACCOUNT")
+                                .font(Theme.Typography.title)
+                                .tracking(2)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 54)
+                    .background(canSubmit ? Theme.Colors.amber : Theme.Colors.surfaceHi)
+                    .foregroundStyle(canSubmit ? .black : Theme.Colors.textDisabled)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg))
+                }
+                .disabled(!canSubmit)
+                .padding(.horizontal, Theme.Spacing.lg)
+
+                Spacer()
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: authVM.isAuthenticated) { _, new in

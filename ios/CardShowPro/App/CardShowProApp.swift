@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct PokeScanApp: App {
+struct CardShowProApp: App {
     @State private var authVM = AuthViewModel()
     @State private var appState = AppState()
 
