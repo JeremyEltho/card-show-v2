@@ -15,9 +15,10 @@ actor CardScannerService: NSObject {
     private var captureSession: AVCaptureSession?
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var lastProcessedTime: Date = .distantPast
-    /// One frame per second. Pokémon card scanning doesn't need 30 FPS — the OCR + fuzzy
-    /// match is heavy and lower frequency keeps the device cool + responsive.
-    private let processingInterval: TimeInterval = 1.0
+    /// ~3 frames per second. Vision OCR + on-device fuzzy match together run in
+    /// ~80-150ms on modern iPhones, so we can afford to scan aggressively. The
+    /// atomic frame gate below drops frames that arrive while one's in flight.
+    private let processingInterval: TimeInterval = 0.35
     private var isProcessing = false
 
     /// Synchronous gate used by the capture delegate (which runs on a non-actor thread).

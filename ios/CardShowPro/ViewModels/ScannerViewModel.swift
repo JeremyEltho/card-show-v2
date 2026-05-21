@@ -76,23 +76,21 @@ final class ScannerViewModel: CardScannerDelegate {
 
     @MainActor
     private func handleMatch(_ match: CardMatch) async {
-        // Ignore new detections while the success overlay is up or we're paused
+        // Ignore new detections while a sheet is open, the success overlay is up,
+        // or we're paused between scans.
         guard !didJustLog, !isPausedAfterLog else { return }
+        // If a confirmation sheet is already showing for this scan, don't replace it
+        if case .awaitingConfirmation = scanState { return }
+        if case .manualAssist = scanState { return }
 
         let confidence = match.confidence
 
-        if confidence >= 0.95 {
-            // Auto-confirm: log immediately using the current mode (buy/sell/trade)
-            scanState = .autoConfirmed(match)
-            await logCard(match, status: logMode.inventoryStatus, auto: true)
-            // Show success overlay — the user decides DONE / SCAN ANOTHER / UNDO
-            didJustLog = true
-
-        } else if confidence >= 0.80 {
+        // Vendors always need to enter the price they actually paid (it almost never
+        // equals the market price). Even at very high card-ID confidence we still
+        // show the result sheet so the price can be edited before logging.
+        if confidence >= 0.80 {
             scanState = .awaitingConfirmation(match)
-
         } else {
-            // Extract OCR hint from match name as best guess
             let hint = match.name
             scanState = .manualAssist(hint)
         }
