@@ -25,7 +25,7 @@ struct TodayView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: {
-                        Image(systemName: "person.crop.circle")
+                        Image(systemName: "gearshape.fill")
                             .foregroundStyle(Theme.Colors.amber)
                     }
                 }
@@ -39,48 +39,39 @@ struct TodayView: View {
         .task { await vm.load() }
     }
 
-    // MARK: - Content
-
-    private func content(_ summary: AnalyticsSummary) -> some View {
+    private func content(_ summary: InventoryService.TodaySummary) -> some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.md) {
-                // Show name header
                 if !appState.activeShowName.isEmpty {
                     HStack(spacing: 6) {
-                        Circle()
-                            .fill(Theme.Colors.green)
-                            .frame(width: 6, height: 6)
+                        Circle().fill(Theme.Colors.green).frame(width: 6, height: 6)
                         Text("LIVE · \(appState.activeShowName.uppercased())")
-                            .font(Theme.Typography.label)
-                            .tracking(1)
+                            .font(Theme.Typography.label).tracking(1)
                             .foregroundStyle(Theme.Colors.green)
                         Spacer()
                     }
                     .padding(.horizontal, Theme.Spacing.xs)
                 }
 
-                // Three big numbers — buys, sells, net
                 HStack(spacing: Theme.Spacing.sm) {
                     StatTile(
                         label: "Buys today",
-                        value: String(format: "$%.0f", summary.showSummary.spent),
+                        value: String(format: "$%.0f", summary.buys),
                         accent: Theme.Colors.blue,
-                        subtitle: "\(buyCount(summary)) cards in"
+                        subtitle: "\(summary.cardsIn) cards in"
                     )
                     StatTile(
                         label: "Sells today",
-                        value: String(format: "$%.0f", summary.showSummary.earned),
+                        value: String(format: "$%.0f", summary.sells),
                         accent: Theme.Colors.green,
-                        subtitle: "\(sellCount(summary)) cards out"
+                        subtitle: "\(summary.cardsOut) cards out"
                     )
                 }
 
-                // Net P&L — big single number
-                let net = summary.showSummary.net
+                let net = summary.net
                 VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                     Text("NET TODAY")
-                        .font(Theme.Typography.label)
-                        .tracking(1)
+                        .font(Theme.Typography.label).tracking(1)
                         .foregroundStyle(Theme.Colors.textTertiary)
                     HStack(alignment: .firstTextBaseline, spacing: Theme.Spacing.sm) {
                         Text(netDisplay(net))
@@ -97,12 +88,10 @@ struct TodayView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .surfaceCard(padding: Theme.Spacing.lg)
 
-                // All-time stats — tighter, secondary
                 HStack(spacing: Theme.Spacing.sm) {
-                    smallStat("All-time", String(format: "$%.0f", summary.netProfit),
-                              tint: summary.netProfit >= 0 ? Theme.Colors.green : Theme.Colors.red)
-                    smallStat("Sold", "\(summary.cardsSold)", tint: Theme.Colors.textSecondary)
-                    smallStat("Stock", "\(summary.cardsHolding)", tint: Theme.Colors.textSecondary)
+                    smallStat("All-time", String(format: "$%.0f", summary.allTimeNet),
+                              tint: summary.allTimeNet >= 0 ? Theme.Colors.green : Theme.Colors.red)
+                    smallStat("Stock", "\(summary.stockCount)", tint: Theme.Colors.amber)
                 }
             }
             .padding(Theme.Spacing.md)
@@ -112,12 +101,9 @@ struct TodayView: View {
     private func smallStat(_ label: String, _ value: String, tint: Color) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label.uppercased())
-                .font(Theme.Typography.label)
-                .tracking(0.5)
+                .font(Theme.Typography.label).tracking(0.5)
                 .foregroundStyle(Theme.Colors.textTertiary)
-            Text(value)
-                .font(Theme.Typography.priceMd)
-                .foregroundStyle(tint)
+            Text(value).font(Theme.Typography.priceMd).foregroundStyle(tint)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .surfaceCard()
@@ -127,18 +113,6 @@ struct TodayView: View {
         let sign = value >= 0 ? "+" : "-"
         return "\(sign)$\(String(format: "%.2f", abs(value)))"
     }
-
-    private func buyCount(_ summary: AnalyticsSummary) -> Int {
-        // For now, use total today's cards minus sells
-        max(summary.showSummary.cardsLogged - sellCount(summary), 0)
-    }
-
-    private func sellCount(_ summary: AnalyticsSummary) -> Int {
-        // Heuristic: if earned > 0, there was at least one sell
-        summary.showSummary.earned > 0 ? max(1, summary.showSummary.cardsLogged / 2) : 0
-    }
-
-    // MARK: - Empty state
 
     private var emptyState: some View {
         VStack(spacing: Theme.Spacing.md) {

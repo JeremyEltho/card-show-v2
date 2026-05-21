@@ -1,22 +1,17 @@
 import Foundation
 import Observation
 
+@MainActor
 @Observable
 final class DashboardViewModel {
-    var summary: AnalyticsSummary?
+    var summary: InventoryService.TodaySummary?
     var isLoading = false
-    var errorMessage: String?
 
     private let service = InventoryService.shared
 
     func load() async {
         isLoading = true
-        errorMessage = nil
-        do {
-            summary = try await service.fetchSummary()
-        } catch {
-            errorMessage = error.localizedDescription
-        }
+        summary = service.summary()
         isLoading = false
     }
 }

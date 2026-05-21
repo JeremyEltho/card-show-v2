@@ -204,8 +204,6 @@ struct ManualAssistView: View {
     @State private var isSearching = false
     @Environment(\.dismiss) private var dismiss
 
-    private let network = NetworkService.shared
-
     init(ocrHint: String, onSelect: @escaping (CardMatch) -> Void) {
         self.ocrHint = ocrHint
         self.onSelect = onSelect
@@ -317,12 +315,7 @@ struct ManualAssistView: View {
     private func search(_ query: String) async {
         guard query.count >= 2 else { results = []; return }
         isSearching = true
-        do {
-            struct Resp: Decodable { let results: [CardSearchResult] }
-            let encodedQ = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
-            let resp: Resp = try await network.request("/cards/search?q=\(encodedQ)&limit=10")
-            results = resp.results
-        } catch { results = [] }
+        results = await PokemonTCGService.shared.search(query: query, limit: 10)
         isSearching = false
     }
 }

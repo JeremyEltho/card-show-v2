@@ -26,11 +26,10 @@ final class ScannerViewModel: CardScannerDelegate {
     var previewLayer: AVCaptureVideoPreviewLayer?
     var cardOverlayRect: CGRect?
     var isLoggingToInventory = false
-    var lastLoggedCard: InventoryItem?
+    var lastLoggedCard: LocalInventoryItem?
     var undoAvailable = false
 
     private let scannerService = CardScannerService()
-    private let network = NetworkService.shared
 
     // MARK: - Camera
 
@@ -106,13 +105,14 @@ final class ScannerViewModel: CardScannerDelegate {
     }
 
     func undoLastLog() async {
-        guard let item = lastLoggedCard else { return }
-        try? await network.delete("/inventory/\(item.id)")
+        if let item = lastLoggedCard {
+            await MainActor.run { InventoryService.shared.delete(item: item) }
+        }
         lastLoggedCard = nil
         undoAvailable = false
     }
 
-    // MARK: - Logging
+    // MARK: - Logging (local-only — no backend)
 
     private func logCard(
         _ match: CardMatch,
@@ -122,25 +122,16 @@ final class ScannerViewModel: CardScannerDelegate {
         sourceLocation: String? = nil,
         auto: Bool
     ) async {
-        let req = CreateInventoryRequest(
-            cardId: match.cardId,
-            status: status,
-            condition: condition,
-            quantity: 1,
-            purchasePrice: purchasePrice ?? match.marketPrice,
-            salePrice: nil,
-            marketPriceAtScan: match.marketPrice,
-            notes: auto ? "Auto-logged (confidence: \(Int(match.confidence * 100))%)" : nil,
-            sourceLocation: sourceLocation,
-            paymentMethod: nil,
-            clientId: UUID().uuidString
-        )
-        do {
-            let item: InventoryItem = try await network.post("/inventory", body: req)
-            lastLoggedCard = item
-        } catch {
-            // Silently fail — item saved offline via SwiftData if needed
+        let item = await MainActor.run {
+            InventoryService.shared.add(
+                card: match,
+                purchasePrice: purchasePrice ?? match.marketPrice,
+                status: status,
+                condition: condition,
+                sourceLocation: sourceLocation ?? ""
+            )
         }
+        lastLoggedCard = item
     }
 }
 

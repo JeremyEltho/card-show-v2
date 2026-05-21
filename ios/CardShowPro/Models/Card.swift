@@ -49,11 +49,11 @@ struct CardPrice: Codable {
 }
 
 struct CardMatch {
-    let cardId: String
-    let name: String
-    let setName: String?
-    let number: String?
-    let imageUrlSm: String?
+    var cardId: String
+    var name: String
+    var setName: String?
+    var number: String?
+    var imageUrlSm: String?
     var confidence: Float
     var marketPrice: Double?
     var pipeline: String
@@ -72,5 +72,40 @@ struct CardSearchResult: Codable, Identifiable {
         case setName = "set_name"
         case number
         case imageUrlSm = "image_url_sm"
+    }
+}
+
+// MARK: - Inventory status / condition enums
+
+enum CardStatus: String, CaseIterable, Codable {
+    case holding, bought, sold, traded
+
+    var displayName: String {
+        switch self {
+        case .holding: return "Holding"
+        case .bought: return "Bought"
+        case .sold: return "Sold"
+        case .traded: return "Traded"
+        }
+    }
+}
+
+enum CardCondition: String, CaseIterable, Codable {
+    case mint
+    case near_mint
+    case lightly_played
+    case moderately_played
+    case heavily_played
+    case damaged
+
+    var displayName: String {
+        switch self {
+        case .mint: return "Mint"
+        case .near_mint: return "Near Mint"
+        case .lightly_played: return "Lightly Played"
+        case .moderately_played: return "Moderately Played"
+        case .heavily_played: return "Heavily Played"
+        case .damaged: return "Damaged"
+        }
     }
 }

@@ -2,23 +2,21 @@ import SwiftUI
 
 struct StockListView: View {
     @State private var vm = InventoryViewModel()
-    @State private var sellingItem: InventoryItem? = nil
+    @State private var sellingItem: LocalInventoryItem? = nil
 
     var body: some View {
         NavigationStack {
             ZStack {
                 Theme.Colors.bg.ignoresSafeArea()
 
-                Group {
-                    if vm.isLoading && vm.items.isEmpty {
-                        ProgressView()
-                            .tint(Theme.Colors.amber)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else if vm.filteredItems.isEmpty {
-                        emptyState
-                    } else {
-                        stockList
-                    }
+                if vm.isLoading && vm.items.isEmpty {
+                    ProgressView()
+                        .tint(Theme.Colors.amber)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if vm.filteredItems.isEmpty {
+                    emptyState
+                } else {
+                    stockList
                 }
             }
             .navigationTitle("Stock")
@@ -26,7 +24,7 @@ struct StockListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button("In Stock (Bought)") { vm.statusFilter = "bought"; Task { await vm.load() } }
+                        Button("In Stock") { vm.statusFilter = "bought"; Task { await vm.load() } }
                         Button("Sold") { vm.statusFilter = "sold"; Task { await vm.load() } }
                         Button("All") { vm.statusFilter = nil; Task { await vm.load() } }
                     } label: {
@@ -46,13 +44,8 @@ struct StockListView: View {
                 }
             }
         }
-        .task {
-            if vm.statusFilter == nil { vm.statusFilter = "bought" }
-            await vm.load()
-        }
+        .task { await vm.load() }
     }
-
-    // MARK: - Stock list
 
     private var stockList: some View {
         ScrollView {
@@ -76,6 +69,11 @@ struct StockListView: View {
                         StockRow(item: item, onSell: { sellingItem = item })
                     }
                     .buttonStyle(.plain)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button("Delete", role: .destructive) {
+                            Task { await vm.delete(item: item) }
+                        }
+                    }
                 }
             }
             .padding(.horizontal, Theme.Spacing.md)
@@ -85,12 +83,10 @@ struct StockListView: View {
 
     private var stockValueLabel: String {
         let total = vm.filteredItems
-            .compactMap { $0.card?.marketPrice }
+            .compactMap { extractMarketPrice(from: $0) ?? $0.purchasePrice }
             .reduce(0, +)
         return String(format: "$%.2f total", total)
     }
-
-    // MARK: - Empty state
 
     private var emptyState: some View {
         VStack(spacing: Theme.Spacing.md) {
@@ -111,20 +107,22 @@ struct StockListView: View {
 // MARK: - Stock row
 
 struct StockRow: View {
-    let item: InventoryItem
+    let item: LocalInventoryItem
     let onSell: () -> Void
+
+    private var marketPrice: Double? { extractMarketPrice(from: item) }
+    private var setName: String? { extractSetName(from: item) }
 
     var body: some View {
         HStack(spacing: Theme.Spacing.md) {
-            // Thumbnail
             cardImage
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(item.card?.name ?? item.cardId)
+                Text(item.cardName ?? item.cardId)
                     .font(Theme.Typography.title)
                     .foregroundStyle(Theme.Colors.textPrimary)
                     .lineLimit(1)
-                if let set = item.card?.setName, !set.isEmpty {
+                if let set = setName {
                     Text(set)
                         .font(Theme.Typography.caption)
                         .foregroundStyle(Theme.Colors.textTertiary)
@@ -143,7 +141,7 @@ struct StockRow: View {
             Spacer(minLength: 8)
 
             VStack(alignment: .trailing, spacing: 4) {
-                if let market = item.card?.marketPrice {
+                if let market = marketPrice {
                     Text(String(format: "$%.0f", market))
                         .font(Theme.Typography.priceLg)
                         .foregroundStyle(Theme.Colors.amber)
@@ -175,7 +173,7 @@ struct StockRow: View {
 
     @ViewBuilder
     private var cardImage: some View {
-        if let url = item.card?.imageUrlSm.flatMap(URL.init) {
+        if let url = item.cardImageUrl.flatMap(URL.init) {
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let img): img.resizable().aspectRatio(contentMode: .fill)
@@ -197,18 +195,40 @@ struct StockRow: View {
     }
 }
 
+// MARK: - Helpers to read embedded notes metadata
+
+func extractMarketPrice(from item: LocalInventoryItem) -> Double? {
+    guard let notes = item.notes else { return nil }
+    for token in notes.split(separator: ";") {
+        let parts = token.split(separator: "=", maxSplits: 1)
+        if parts.count == 2, parts[0] == "market" {
+            return Double(parts[1])
+        }
+    }
+    return nil
+}
+
+func extractSetName(from item: LocalInventoryItem) -> String? {
+    guard let notes = item.notes else { return nil }
+    for token in notes.split(separator: ";") {
+        let parts = token.split(separator: "=", maxSplits: 1)
+        if parts.count == 2, parts[0] == "set" {
+            return String(parts[1])
+        }
+    }
+    return nil
+}
+
 // MARK: - Sell sheet
 
 struct SellSheet: View {
-    let item: InventoryItem
+    let item: LocalInventoryItem
     let onConfirm: (Double) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var price: String = ""
     @FocusState private var priceFocused: Bool
 
-    private var canConfirm: Bool {
-        Double(price) ?? 0 > 0
-    }
+    private var canConfirm: Bool { Double(price) ?? 0 > 0 }
 
     var body: some View {
         NavigationStack {
@@ -217,10 +237,10 @@ struct SellSheet: View {
 
                 VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
                     VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                        Text((item.card?.name ?? item.cardId).uppercased())
+                        Text((item.cardName ?? item.cardId).uppercased())
                             .font(Theme.Typography.label)
                             .foregroundStyle(Theme.Colors.textTertiary)
-                        if let set = item.card?.setName {
+                        if let set = extractSetName(from: item) {
                             Text(set)
                                 .font(Theme.Typography.caption)
                                 .foregroundStyle(Theme.Colors.textTertiary)
@@ -245,7 +265,7 @@ struct SellSheet: View {
                             .fill(Theme.Colors.surface)
                     )
 
-                    if let market = item.card?.marketPrice, let paid = item.purchasePrice {
+                    if let market = extractMarketPrice(from: item), let paid = item.purchasePrice {
                         HStack {
                             Label(String(format: "market $%.2f", market), systemImage: "chart.line.uptrend.xyaxis")
                                 .font(Theme.Typography.priceSm)
@@ -285,7 +305,7 @@ struct SellSheet: View {
             }
         }
         .onAppear {
-            if let market = item.card?.marketPrice {
+            if let market = extractMarketPrice(from: item) {
                 price = String(format: "%.2f", market)
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {

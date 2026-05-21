@@ -18,8 +18,6 @@ actor CardScannerService: NSObject {
     private let processingInterval: TimeInterval = 0.5
     private var isProcessing = false
 
-    private let network = NetworkService.shared
-
     // Start camera session
     func startSession() async throws -> AVCaptureVideoPreviewLayer {
         let session = AVCaptureSession()
@@ -80,16 +78,17 @@ actor CardScannerService: NSObject {
         // Stage 4: OCR
         guard let ocrText = await recognizeText(in: enhanced), !ocrText.isEmpty else { return }
 
-        // Stage 5: Local fuzzy match
-        if let match = FuzzyMatcher.shared.match(ocrText) {
-            await finalize(match)
-            return
-        }
+        // Stage 5: On-device fuzzy match against bundled canonical dictionary (5,437 names)
+        guard let localMatch = FuzzyMatcher.shared.match(ocrText) else { return }
 
-        // Stage 6: Backend fallback
-        let backendMatch = try? await fetchFromBackend(ocrText: ocrText)
-        if let match = backendMatch {
-            await finalize(match)
+        // Stage 6: Look up full metadata + market price from pokemontcg.io directly.
+        // If the API is unreachable we still return the local match (no price, no image).
+        if let api = await PokemonTCGService.shared.lookup(name: localMatch.name) {
+            var enriched = api
+            enriched.confidence = localMatch.confidence    // preserve scanner confidence tier
+            await finalize(enriched)
+        } else {
+            await finalize(localMatch)
         }
     }
 
@@ -130,20 +129,6 @@ actor CardScannerService: NSObject {
         }
     }
 
-    private func fetchFromBackend(ocrText: String) async throws -> CardMatch? {
-        struct ScanReq: Encodable { let ocr_text: String; let ocr_confidence: Float }
-        struct ScanResp: Decodable {
-            let card_id: String; let name: String; let set_name: String?
-            let number: String?; let image_url_sm: String?
-            let confidence: Float; let market_price: Double?; let pipeline: String
-        }
-        let resp: ScanResp = try await network.post("/scan/identify", body: ScanReq(ocr_text: ocrText, ocr_confidence: 0.5))
-        return CardMatch(
-            cardId: resp.card_id, name: resp.name, setName: resp.set_name,
-            number: resp.number, imageUrlSm: resp.image_url_sm,
-            confidence: resp.confidence, marketPrice: resp.market_price, pipeline: resp.pipeline
-        )
-    }
 }
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate

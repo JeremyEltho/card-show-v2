@@ -10,38 +10,29 @@
 		021667AF92C218CCB780379A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5474E1C5FAD61BFD15F0684C /* Assets.xcassets */; };
 		02854EC4971BC567B877E97F /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB6EDB0AEA91337C26291B2 /* AppState.swift */; };
 		1D4B574C683037DBF0D21C73 /* InventoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56CE66AC80FA7D040CBF4148 /* InventoryViewModel.swift */; };
-		2CFA674C7D2CD9E6D809317F /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01FF066460EC9FEE791B747B /* NetworkService.swift */; };
+		2C7276F46713E31B0F7E6DF7 /* PokemonTCGService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5917B5114DF17FCDE0FC063 /* PokemonTCGService.swift */; };
 		2E741460D8259E0F0E8AD301 /* ImagePreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0290E039E0B742202C714C57 /* ImagePreprocessor.swift */; };
 		3552B4EF452BF020E533ACD4 /* CardShowProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050F5D347F455D755B78D1B5 /* CardShowProApp.swift */; };
 		38CAB59D44C08801FA23C69E /* InventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8AF4C0E0251694361912255 /* InventoryService.swift */; };
 		46F3949208A85B029C03A061 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE646A595B762B253E1A633F /* SettingsView.swift */; };
 		4860E737A51275FEE88C84D4 /* CardScannerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 574149CAD4D450217E2CA261 /* CardScannerService.swift */; };
 		4DE20463FFE1D9BF04BEDF63 /* CardOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EB3D943EBB8B1ABCAB214A /* CardOverlayView.swift */; };
-		50DCEF479DDEE2EEE83E984E /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0FB49383EBEEBB79C0411E /* AuthViewModel.swift */; };
-		54030F0C331B983787CE8266 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334EC1B637F7482FE6E4DD4 /* AuthService.swift */; };
-		579A74A30C7C8501D94DA1C7 /* card_names_cache.json in Resources */ = {isa = PBXBuildFile; fileRef = 9A1FF622E760B55AA69A00DD /* card_names_cache.json */; };
 		621EFDA938B22D7637D6DDF2 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EEC0666274460635340B0B5 /* TodayView.swift */; };
 		68240037AF8A34F43AE18440 /* FuzzyMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021CA7FC1CE69CC4B1FFA643 /* FuzzyMatcher.swift */; };
-		69D5AA9863181ADEB5E2262B /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798C7D6629C765856208BEC7 /* LoginView.swift */; };
 		74508D7775131A71808C5A94 /* SwiftDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9648CDBD35FFC36962D315A6 /* SwiftDataModels.swift */; };
 		7855CFA3B1E8FE09001A219E /* ScanResultSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319BA377685C10256A018D89 /* ScanResultSheet.swift */; };
+		7FA48FDFA3528ADBC6FD6FB3 /* pokemon_names.json in Resources */ = {isa = PBXBuildFile; fileRef = DFD61E7089AA75AB55DC657A /* pokemon_names.json */; };
 		813A4846041BF34051CD7B07 /* StockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B864CF9A957C3FC994AC67E /* StockListView.swift */; };
 		8970480BD80D8B83B949A91D /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242326453AD69FE234134B1D /* DashboardViewModel.swift */; };
-		903EE0F2228B23D8292D63B1 /* InventoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618AEDC74E5542AA6B919568 /* InventoryItem.swift */; };
 		9185D239744FCE86ED46495D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064653497DC869D6C48D6F4C /* RootView.swift */; };
-		996F54BB579B7BBFFE5A98AD /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F58B40F6E8501EC0E05FAEC /* Analytics.swift */; };
 		C54580B17A4B0F581B49E704 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1DDE2A32ABFD954DB06E92 /* Theme.swift */; };
 		C6B8B6EB90A0AA09FD48101B /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65007C53901C1C561B94C56 /* Card.swift */; };
-		D4676A6CBDA5A61EB434B601 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81766E3DE2301E4BDED7D79B /* RegisterView.swift */; };
 		D7AD28CA87E7B15D3E3A06F9 /* ScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93D3361B35CA6F929808299 /* ScannerViewModel.swift */; };
 		E749868FAFDF3FFF1894EB13 /* CardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E52FFB30238593F591047 /* CardDetailView.swift */; };
-		F0F1E8F9071A88EB6009C4CF /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28386537A84B1A33C4C2C1F8 /* Transaction.swift */; };
 		FA9E1C3798B6EDFE2CADA641 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C85B764F8A92D1954812C7 /* ScannerView.swift */; };
-		FB299A1AFFFCDA36DA650F4A /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FAA03055E35DDD94ED4D70 /* KeychainHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		01FF066460EC9FEE791B747B /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		021CA7FC1CE69CC4B1FFA643 /* FuzzyMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuzzyMatcher.swift; sourceTree = "<group>"; };
 		0290E039E0B742202C714C57 /* ImagePreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreprocessor.swift; sourceTree = "<group>"; };
 		050F5D347F455D755B78D1B5 /* CardShowProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardShowProApp.swift; sourceTree = "<group>"; };
@@ -49,7 +40,6 @@
 		1EEC0666274460635340B0B5 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		235E52FFB30238593F591047 /* CardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailView.swift; sourceTree = "<group>"; };
 		242326453AD69FE234134B1D /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
-		28386537A84B1A33C4C2C1F8 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		319BA377685C10256A018D89 /* ScanResultSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanResultSheet.swift; sourceTree = "<group>"; };
 		3E902078208F82D4C37342BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		43EB3D943EBB8B1ABCAB214A /* CardOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardOverlayView.swift; sourceTree = "<group>"; };
@@ -57,21 +47,15 @@
 		56CE66AC80FA7D040CBF4148 /* InventoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryViewModel.swift; sourceTree = "<group>"; };
 		574149CAD4D450217E2CA261 /* CardScannerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardScannerService.swift; sourceTree = "<group>"; };
 		5B864CF9A957C3FC994AC67E /* StockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockListView.swift; sourceTree = "<group>"; };
-		618AEDC74E5542AA6B919568 /* InventoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryItem.swift; sourceTree = "<group>"; };
 		6DB6EDB0AEA91337C26291B2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		798C7D6629C765856208BEC7 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		7F58B40F6E8501EC0E05FAEC /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
-		81766E3DE2301E4BDED7D79B /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		9648CDBD35FFC36962D315A6 /* SwiftDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModels.swift; sourceTree = "<group>"; };
-		9A1FF622E760B55AA69A00DD /* card_names_cache.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = card_names_cache.json; sourceTree = "<group>"; };
 		A65007C53901C1C561B94C56 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		B2C85B764F8A92D1954812C7 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
 		B8AF4C0E0251694361912255 /* InventoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryService.swift; sourceTree = "<group>"; };
-		BA0FB49383EBEEBB79C0411E /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		CE1DDE2A32ABFD954DB06E92 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		D5917B5114DF17FCDE0FC063 /* PokemonTCGService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonTCGService.swift; sourceTree = "<group>"; };
 		D93D3361B35CA6F929808299 /* ScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewModel.swift; sourceTree = "<group>"; };
-		D9FAA03055E35DDD94ED4D70 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
-		E334EC1B637F7482FE6E4DD4 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		DFD61E7089AA75AB55DC657A /* pokemon_names.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = pokemon_names.json; sourceTree = "<group>"; };
 		EE646A595B762B253E1A633F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F6394B35D189E16247EBA2E8 /* CardShowPro.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CardShowPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -98,7 +82,6 @@
 			children = (
 				021CA7FC1CE69CC4B1FFA643 /* FuzzyMatcher.swift */,
 				0290E039E0B742202C714C57 /* ImagePreprocessor.swift */,
-				D9FAA03055E35DDD94ED4D70 /* KeychainHelper.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -115,8 +98,8 @@
 			isa = PBXGroup;
 			children = (
 				5474E1C5FAD61BFD15F0684C /* Assets.xcassets */,
-				9A1FF622E760B55AA69A00DD /* card_names_cache.json */,
 				3E902078208F82D4C37342BF /* Info.plist */,
+				DFD61E7089AA75AB55DC657A /* pokemon_names.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -175,7 +158,6 @@
 		9B002344970B3C33B51A7EA7 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				BA0FB49383EBEEBB79C0411E /* AuthViewModel.swift */,
 				242326453AD69FE234134B1D /* DashboardViewModel.swift */,
 				56CE66AC80FA7D040CBF4148 /* InventoryViewModel.swift */,
 				D93D3361B35CA6F929808299 /* ScannerViewModel.swift */,
@@ -210,30 +192,17 @@
 		DB4C8F705FD97587C4E66410 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				7F58B40F6E8501EC0E05FAEC /* Analytics.swift */,
 				A65007C53901C1C561B94C56 /* Card.swift */,
-				618AEDC74E5542AA6B919568 /* InventoryItem.swift */,
-				28386537A84B1A33C4C2C1F8 /* Transaction.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		E8062A778E205F662F2F57A3 /* Auth */ = {
-			isa = PBXGroup;
-			children = (
-				798C7D6629C765856208BEC7 /* LoginView.swift */,
-				81766E3DE2301E4BDED7D79B /* RegisterView.swift */,
-			);
-			path = Auth;
 			sourceTree = "<group>";
 		};
 		EDEBF8B1FA2576D095B8E504 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				E334EC1B637F7482FE6E4DD4 /* AuthService.swift */,
 				574149CAD4D450217E2CA261 /* CardScannerService.swift */,
 				B8AF4C0E0251694361912255 /* InventoryService.swift */,
-				01FF066460EC9FEE791B747B /* NetworkService.swift */,
+				D5917B5114DF17FCDE0FC063 /* PokemonTCGService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -242,7 +211,6 @@
 			isa = PBXGroup;
 			children = (
 				064653497DC869D6C48D6F4C /* RootView.swift */,
-				E8062A778E205F662F2F57A3 /* Auth */,
 				5E11398240AC181B37A175AB /* Inventory */,
 				76C9B5DA8BD118BFD72B68CC /* Scanner */,
 				564CE31CEB104A6FEB37868E /* Settings */,
@@ -313,7 +281,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				021667AF92C218CCB780379A /* Assets.xcassets in Resources */,
-				579A74A30C7C8501D94DA1C7 /* card_names_cache.json in Resources */,
+				7FA48FDFA3528ADBC6FD6FB3 /* pokemon_names.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,10 +292,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				996F54BB579B7BBFFE5A98AD /* Analytics.swift in Sources */,
 				02854EC4971BC567B877E97F /* AppState.swift in Sources */,
-				54030F0C331B983787CE8266 /* AuthService.swift in Sources */,
-				50DCEF479DDEE2EEE83E984E /* AuthViewModel.swift in Sources */,
 				C6B8B6EB90A0AA09FD48101B /* Card.swift in Sources */,
 				E749868FAFDF3FFF1894EB13 /* CardDetailView.swift in Sources */,
 				4DE20463FFE1D9BF04BEDF63 /* CardOverlayView.swift in Sources */,
@@ -336,13 +301,9 @@
 				8970480BD80D8B83B949A91D /* DashboardViewModel.swift in Sources */,
 				68240037AF8A34F43AE18440 /* FuzzyMatcher.swift in Sources */,
 				2E741460D8259E0F0E8AD301 /* ImagePreprocessor.swift in Sources */,
-				903EE0F2228B23D8292D63B1 /* InventoryItem.swift in Sources */,
 				38CAB59D44C08801FA23C69E /* InventoryService.swift in Sources */,
 				1D4B574C683037DBF0D21C73 /* InventoryViewModel.swift in Sources */,
-				FB299A1AFFFCDA36DA650F4A /* KeychainHelper.swift in Sources */,
-				69D5AA9863181ADEB5E2262B /* LoginView.swift in Sources */,
-				2CFA674C7D2CD9E6D809317F /* NetworkService.swift in Sources */,
-				D4676A6CBDA5A61EB434B601 /* RegisterView.swift in Sources */,
+				2C7276F46713E31B0F7E6DF7 /* PokemonTCGService.swift in Sources */,
 				9185D239744FCE86ED46495D /* RootView.swift in Sources */,
 				7855CFA3B1E8FE09001A219E /* ScanResultSheet.swift in Sources */,
 				FA9E1C3798B6EDFE2CADA641 /* ScannerView.swift in Sources */,
@@ -352,7 +313,6 @@
 				74508D7775131A71808C5A94 /* SwiftDataModels.swift in Sources */,
 				C54580B17A4B0F581B49E704 /* Theme.swift in Sources */,
 				621EFDA938B22D7637D6DDF2 /* TodayView.swift in Sources */,
-				F0F1E8F9071A88EB6009C4CF /* Transaction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

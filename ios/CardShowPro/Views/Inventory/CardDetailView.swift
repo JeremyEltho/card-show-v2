@@ -1,10 +1,13 @@
 import SwiftUI
 
 struct CardDetailView: View {
-    let item: InventoryItem
+    let item: LocalInventoryItem
     let vm: InventoryViewModel
 
     @State private var showSellSheet = false
+
+    private var marketPrice: Double? { extractMarketPrice(from: item) }
+    private var setName: String? { extractSetName(from: item) }
 
     var body: some View {
         ZStack {
@@ -12,39 +15,34 @@ struct CardDetailView: View {
 
             ScrollView {
                 VStack(spacing: Theme.Spacing.lg) {
-                    // Hero image
-                    if let url = item.card?.imageUrlSm.flatMap(URL.init) {
+                    if let url = item.cardImageUrl.flatMap(URL.init) {
                         AsyncImage(url: url) { phase in
                             switch phase {
                             case .success(let img): img.resizable().aspectRatio(contentMode: .fit)
                             default: Theme.Colors.surface
                             }
                         }
-                        .frame(maxWidth: 220)
-                        .frame(maxHeight: 308)
+                        .frame(maxWidth: 220, maxHeight: 308)
                         .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
                         .shadow(color: .black.opacity(0.5), radius: 24, y: 12)
                         .padding(.top, Theme.Spacing.md)
                     }
 
-                    // Name + set
                     VStack(spacing: Theme.Spacing.xs) {
-                        Text(item.card?.name ?? item.cardId)
+                        Text(item.cardName ?? item.cardId)
                             .font(Theme.Typography.headline)
                             .foregroundStyle(Theme.Colors.textPrimary)
                             .multilineTextAlignment(.center)
-                        if let set = item.card?.setName {
+                        if let set = setName {
                             Text(set)
                                 .font(Theme.Typography.body)
                                 .foregroundStyle(Theme.Colors.textSecondary)
                         }
-                        StatusPill(status: item.status)
-                            .padding(.top, 4)
+                        StatusPill(status: item.status).padding(.top, 4)
                     }
 
-                    // Price tiles
                     HStack(spacing: Theme.Spacing.sm) {
-                        if let market = item.card?.marketPrice {
+                        if let market = marketPrice {
                             priceTile("MARKET", String(format: "$%.2f", market), tint: Theme.Colors.amber)
                         }
                         if let purchase = item.purchasePrice {
@@ -55,7 +53,6 @@ struct CardDetailView: View {
                         }
                     }
 
-                    // Details
                     VStack(spacing: 0) {
                         detailRow("Condition", item.condition.replacingOccurrences(of: "_", with: " ").capitalized)
                         Divider().background(Theme.Colors.divider)
@@ -64,14 +61,9 @@ struct CardDetailView: View {
                             Divider().background(Theme.Colors.divider)
                             detailRow("Source", loc)
                         }
-                        if let notes = item.notes {
-                            Divider().background(Theme.Colors.divider)
-                            detailRow("Notes", notes)
-                        }
                     }
                     .surfaceCard()
 
-                    // Sell button
                     if item.status == "bought" {
                         Button { showSellSheet = true } label: {
                             HStack {
@@ -91,7 +83,7 @@ struct CardDetailView: View {
                 .padding(Theme.Spacing.md)
             }
         }
-        .navigationTitle(item.card?.name ?? "Card")
+        .navigationTitle(item.cardName ?? "Card")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showSellSheet) {
             SellSheet(item: item) { price in
@@ -105,13 +97,8 @@ struct CardDetailView: View {
 
     private func priceTile(_ label: String, _ value: String, tint: Color) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(Theme.Typography.label)
-                .tracking(1)
-                .foregroundStyle(Theme.Colors.textTertiary)
-            Text(value)
-                .font(Theme.Typography.priceMd)
-                .foregroundStyle(tint)
+            Text(label).font(Theme.Typography.label).tracking(1).foregroundStyle(Theme.Colors.textTertiary)
+            Text(value).font(Theme.Typography.priceMd).foregroundStyle(tint)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .surfaceCard()
@@ -120,13 +107,10 @@ struct CardDetailView: View {
     private func detailRow(_ label: String, _ value: String) -> some View {
         HStack {
             Text(label.uppercased())
-                .font(Theme.Typography.label)
-                .tracking(1)
-                .foregroundStyle(Theme.Colors.textTertiary)
+                .font(Theme.Typography.label).tracking(1).foregroundStyle(Theme.Colors.textTertiary)
             Spacer()
             Text(value)
-                .font(Theme.Typography.body)
-                .foregroundStyle(Theme.Colors.textPrimary)
+                .font(Theme.Typography.body).foregroundStyle(Theme.Colors.textPrimary)
                 .multilineTextAlignment(.trailing)
         }
         .padding(.vertical, 8)
