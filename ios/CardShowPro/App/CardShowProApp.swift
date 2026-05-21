@@ -15,6 +15,12 @@ struct CardShowProApp: App {
         return c
     }()
 
+    init() {
+        // Preload the 5,437-name canonical dictionary off the main thread so the
+        // first scan doesn't stall the camera while it parses JSON + builds the map.
+        FuzzyMatcher.preload()
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()

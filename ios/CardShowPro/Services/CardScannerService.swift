@@ -15,8 +15,14 @@ actor CardScannerService: NSObject {
     private var captureSession: AVCaptureSession?
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var lastProcessedTime: Date = .distantPast
-    private let processingInterval: TimeInterval = 0.5
+    /// One frame per second. Pokémon card scanning doesn't need 30 FPS — the OCR + fuzzy
+    /// match is heavy and lower frequency keeps the device cool + responsive.
+    private let processingInterval: TimeInterval = 1.0
     private var isProcessing = false
+
+    /// Synchronous gate used by the capture delegate (which runs on a non-actor thread).
+    /// Prevents spawning a Task for every camera frame when one's already in flight.
+    nonisolated(unsafe) private var frameGate = AtomicFlag()
 
     // Start camera session
     func startSession() async throws -> AVCaptureVideoPreviewLayer {
@@ -132,10 +138,42 @@ actor CardScannerService: NSObject {
 }
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
+
 extension CardScannerService: AVCaptureVideoDataOutputSampleBufferDelegate {
     nonisolated func captureOutput(_ output: AVCaptureOutput,
                                    didOutput sampleBuffer: CMSampleBuffer,
                                    from connection: AVCaptureConnection) {
-        Task { await processFrame(sampleBuffer) }
+        // Synchronous gate — drop the frame immediately if a previous one is still
+        // being processed. Without this we'd queue up dozens of Tasks per second
+        // and overwhelm the device. The atomic flag is cleared inside processFrame
+        // once OCR + fuzzy match complete.
+        guard frameGate.tryAcquire() else { return }
+
+        let buffer = sampleBuffer
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            await self.processFrame(buffer)
+            self.frameGate.release()
+        }
+    }
+}
+
+// MARK: - Simple atomic flag (used by the non-actor capture delegate)
+
+final class AtomicFlag: @unchecked Sendable {
+    private let lock = NSLock()
+    private var inFlight = false
+
+    /// Returns true if the caller acquired the flag, false if it was already set.
+    func tryAcquire() -> Bool {
+        lock.lock(); defer { lock.unlock() }
+        if inFlight { return false }
+        inFlight = true
+        return true
+    }
+
+    func release() {
+        lock.lock(); defer { lock.unlock() }
+        inFlight = false
     }
 }
