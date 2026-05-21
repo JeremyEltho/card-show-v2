@@ -357,6 +357,9 @@ final class FuzzyMatcher {
         for i in 0..<la {
             let start = max(0, i - matchDist)
             let end = min(i + matchDist + 1, lb)
+            // When `i` is near la-1 but lb is much smaller, `start` can exceed `end`.
+            // Skip rather than crash on a `start..<end` with start > end.
+            if start >= end { continue }
             for j in start..<end where !s2m[j] && a[i] == b[j] {
                 s1m[i] = true; s2m[j] = true; matches += 1; break
             }
