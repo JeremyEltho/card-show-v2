@@ -41,8 +41,31 @@ actor CardScannerService: NSObject {
         output.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.pokescan.camera"))
         session.addOutput(output)
 
+        // Force portrait orientation on the buffer so OCR cropping sees the card
+        // upright. Without this, the back camera delivers landscape sensor data
+        // (card name on the right edge instead of the top), and our crop-the-top
+        // logic ends up reading from the side of the card.
+        if let connection = output.connection(with: .video) {
+            if #available(iOS 17.0, *) {
+                if connection.isVideoRotationAngleSupported(90) {
+                    connection.videoRotationAngle = 90
+                }
+            } else if connection.isVideoOrientationSupported {
+                connection.videoOrientation = .portrait
+            }
+        }
+
         let layer = AVCaptureVideoPreviewLayer(session: session)
         layer.videoGravity = .resizeAspectFill
+        if let pConn = layer.connection {
+            if #available(iOS 17.0, *) {
+                if pConn.isVideoRotationAngleSupported(90) {
+                    pConn.videoRotationAngle = 90
+                }
+            } else if pConn.isVideoOrientationSupported {
+                pConn.videoOrientation = .portrait
+            }
+        }
         self.captureSession = session
         self.previewLayer = layer
 
@@ -75,23 +98,26 @@ actor CardScannerService: NSObject {
         await MainActor.run { d?.scannerDidUpdateOverlay(rect: cardRect?.boundingBox, in: .zero) }
 
         // Stage 2: Build the OCR region.
-        //   - With a detection: perspective-correct → crop title band
-        //   - Without one: just crop the top 35% of the camera frame (the user is
-        //     instructed to fit the card inside the on-screen guide, so the card name
-        //     should land in roughly that region)
+        //   - With a detection: perspective-correct → crop top 25% (title band)
+        //   - Without one: crop the area corresponding to the on-screen guide frame's
+        //     title band — top 22% of the central 80% of the camera image (in portrait).
+        //     This matches roughly where the user places the card name with the
+        //     amber guide frame.
         let ocrImage: CIImage
         if let rect = cardRect {
             let corrected = ImagePreprocessor.perspectiveCorrect(ciImage, rect: rect)
             ocrImage = ImagePreprocessor.cropTitleBand(corrected)
         } else {
-            // Crop the central card-shaped band of the frame where the user is told
-            // to place the card. Top portion gets us the card name.
             let ext = ciImage.extent
+            // Top band: high Y (in CIImage bottom-origin space) = top of the screen
+            // when the buffer is portrait-oriented. We want the upper portion of the
+            // guide frame, which sits roughly between 14% and 32% from the top of the
+            // screen. In CIImage Y space that's 0.68*maxY to 0.86*maxY.
             let band = CGRect(
-                x: ext.midX - ext.width * 0.35,
-                y: ext.midY + ext.height * 0.05,
-                width: ext.width * 0.70,
-                height: ext.height * 0.20
+                x: ext.minX + ext.width * 0.12,
+                y: ext.maxY * 0.68,
+                width: ext.width * 0.76,
+                height: ext.maxY * 0.18
             )
             ocrImage = ciImage.cropped(to: band)
         }
@@ -100,8 +126,15 @@ actor CardScannerService: NSObject {
         // Stage 3: OCR
         guard let ocrText = await recognizeText(in: enhanced), !ocrText.isEmpty else { return }
 
-        // Stage 4: On-device fuzzy match against bundled canonical dictionary (5,437 names)
+        // Stage 4: On-device fuzzy match against bundled canonical dictionary
         guard let localMatch = FuzzyMatcher.shared.match(ocrText) else { return }
+
+        // Stage 5: Confidence floor — be stricter when we couldn't see the card
+        // boundaries. Without rectangle detection, OCR can pick up text from anywhere
+        // in the cropped region (set logos, attack names, etc.), so we require a
+        // near-perfect match to avoid false positives like "Resistance Gym".
+        let minConfidence: Float = (cardRect != nil) ? 0.80 : 0.92
+        guard localMatch.confidence >= minConfidence else { return }
 
         // Stage 6: Look up full metadata + market price from pokemontcg.io directly.
         // If the API is unreachable we still return the local match (no price, no image).
