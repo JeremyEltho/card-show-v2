@@ -60,3 +60,7 @@ backend/htmlcov/
 
 # Claude artifacts
 .claude/
+
+# Local device-install config (contains personal Team ID)
+.cardshow.config
+ios/project.local.yml

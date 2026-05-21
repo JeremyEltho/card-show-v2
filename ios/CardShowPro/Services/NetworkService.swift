@@ -27,7 +27,31 @@ extension String {
 
 actor NetworkService {
     static let shared = NetworkService()
-    static var baseURL = "http://localhost:8000/api/v1"
+
+    /// Runtime-configurable backend URL.
+    /// Priority order:
+    ///   1. UserDefaults["backend_url"]  (user-edited in Settings)
+    ///   2. Info.plist["BackendBaseURL"]  (build-time inject from run-on-device.sh)
+    ///   3. Localhost fallback (works for simulator only)
+    static var baseURL: String {
+        if let user = UserDefaults.standard.string(forKey: "backend_url"), !user.isEmpty {
+            return user
+        }
+        if let plist = Bundle.main.object(forInfoDictionaryKey: "BackendBaseURL") as? String,
+           !plist.isEmpty, plist != "$(BACKEND_BASE_URL)" {
+            return plist
+        }
+        return "http://localhost:8000/api/v1"
+    }
+
+    static func setBaseURL(_ url: String) {
+        let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        UserDefaults.standard.set(trimmed, forKey: "backend_url")
+    }
+
+    static func resetBaseURL() {
+        UserDefaults.standard.removeObject(forKey: "backend_url")
+    }
 
     private let session: URLSession
     private let decoder: JSONDecoder
