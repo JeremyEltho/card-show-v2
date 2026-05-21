@@ -60,11 +60,17 @@ final class FuzzyMatcher {
             }
         }
         allCanonical = ordered
-        normalisedMap = Dictionary(uniqueKeysWithValues:
-            ordered.map { (normalise($0), $0) }
-        )
+        // Build normalised → canonical map, keeping the first occurrence on collisions.
+        // The source lists overlap intentionally (e.g. "Alakazam" appears in both
+        // pokemon_full and pokemon_base), so uniqueKeysWithValues would crash.
+        var map: [String: String] = [:]
+        for name in ordered {
+            let key = normalise(name)
+            if map[key] == nil { map[key] = name }
+        }
+        normalisedMap = map
         pokemonBase = Set(dict.pokemon_base.map { $0.lowercased() })
-        print("FuzzyMatcher: loaded \(allCanonical.count) canonical names")
+        print("FuzzyMatcher: loaded \(allCanonical.count) canonical names, \(normalisedMap.count) unique normalised keys")
     }
 
     // MARK: - Normalisation (mirrors Python validator)
