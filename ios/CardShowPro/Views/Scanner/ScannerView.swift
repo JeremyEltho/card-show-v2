@@ -2,8 +2,13 @@ import SwiftUI
 import AVFoundation
 
 struct ScannerView: View {
+    let logMode: LogMode
     @State private var vm = ScannerViewModel()
     @Environment(AppState.self) private var appState
+
+    init(logMode: LogMode = .buy) {
+        self.logMode = logMode
+    }
 
     var body: some View {
         ZStack {
@@ -42,6 +47,7 @@ struct ScannerView: View {
             if case .awaitingConfirmation(let match) = vm.scanState {
                 ScanResultSheet(
                     match: match,
+                    logMode: logMode,
                     isAwaitingConfirmation: true,
                     onConfirm: { price, condition, status in
                         Task { await vm.confirmCard(match, price: price, condition: condition, status: status, sourceLocation: appState.activeShowName) }
@@ -58,33 +64,44 @@ struct ScannerView: View {
         )) {
             if case .manualAssist(let ocrHint) = vm.scanState {
                 ManualAssistView(ocrHint: ocrHint) { match in
-                    Task { await vm.confirmCard(match, price: match.marketPrice, condition: "near_mint", status: "bought", sourceLocation: appState.activeShowName) }
+                    Task { await vm.confirmCard(match, price: match.marketPrice, condition: "near_mint", status: logMode.inventoryStatus, sourceLocation: appState.activeShowName) }
                 }
                 .presentationDetents([.medium, .large])
                 .presentationBackground(Theme.Colors.bg)
             }
         }
-        .task { await vm.startCamera() }
+        .task {
+            vm.logMode = logMode
+            await vm.startCamera()
+        }
         .onDisappear { Task { await vm.stopCamera() } }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
 
     // MARK: - Top bar
 
     private var topBar: some View {
         HStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: "rectangle.dashed.badge.record")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Theme.Colors.amber)
-            Text("CARDSHOW PRO")
-                .font(Theme.Typography.label)
-                .tracking(2)
-                .foregroundStyle(Theme.Colors.textPrimary)
+            // Mode pill — biggest signal on the screen so the vendor knows what
+            // action will be taken when the scan auto-confirms.
+            HStack(spacing: 6) {
+                Image(systemName: logMode.icon)
+                    .font(.system(size: 14, weight: .bold))
+                Text("\(logMode.title) MODE")
+                    .font(Theme.Typography.label)
+                    .tracking(2)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(logMode.tint))
+            .foregroundStyle(.black)
+
             Spacer()
+
             if !appState.activeShowName.isEmpty {
                 HStack(spacing: 6) {
-                    Circle()
-                        .fill(Theme.Colors.green)
-                        .frame(width: 6, height: 6)
+                    Circle().fill(Theme.Colors.green).frame(width: 6, height: 6)
                     Text(appState.activeShowName.uppercased())
                         .font(Theme.Typography.label)
                         .tracking(1)

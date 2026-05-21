@@ -1,108 +1,7 @@
 import SwiftUI
 
-struct StockListView: View {
-    @State private var vm = InventoryViewModel()
-    @State private var sellingItem: LocalInventoryItem? = nil
-
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                Theme.Colors.bg.ignoresSafeArea()
-
-                if vm.isLoading && vm.items.isEmpty {
-                    ProgressView()
-                        .tint(Theme.Colors.amber)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if vm.filteredItems.isEmpty {
-                    emptyState
-                } else {
-                    stockList
-                }
-            }
-            .navigationTitle("Stock")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button("In Stock") { vm.statusFilter = "bought"; Task { await vm.load() } }
-                        Button("Sold") { vm.statusFilter = "sold"; Task { await vm.load() } }
-                        Button("All") { vm.statusFilter = nil; Task { await vm.load() } }
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                            .foregroundStyle(Theme.Colors.amber)
-                    }
-                }
-            }
-            .searchable(text: $vm.searchText, prompt: "Search by card name")
-            .refreshable { await vm.load() }
-            .sheet(item: $sellingItem) { item in
-                SellSheet(item: item) { price in
-                    Task {
-                        await vm.markSold(item: item, price: price)
-                        sellingItem = nil
-                    }
-                }
-            }
-        }
-        .task { await vm.load() }
-    }
-
-    private var stockList: some View {
-        ScrollView {
-            LazyVStack(spacing: Theme.Spacing.sm) {
-                HStack {
-                    Text("\(vm.filteredItems.count) cards")
-                        .font(Theme.Typography.captionMono)
-                        .foregroundStyle(Theme.Colors.textTertiary)
-                    Spacer()
-                    Text(stockValueLabel)
-                        .font(Theme.Typography.priceSm)
-                        .foregroundStyle(Theme.Colors.amber)
-                }
-                .padding(.horizontal, Theme.Spacing.md)
-                .padding(.top, Theme.Spacing.sm)
-
-                ForEach(vm.filteredItems) { item in
-                    NavigationLink {
-                        CardDetailView(item: item, vm: vm)
-                    } label: {
-                        StockRow(item: item, onSell: { sellingItem = item })
-                    }
-                    .buttonStyle(.plain)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button("Delete", role: .destructive) {
-                            Task { await vm.delete(item: item) }
-                        }
-                    }
-                }
-            }
-            .padding(.horizontal, Theme.Spacing.md)
-            .padding(.bottom, Theme.Spacing.lg)
-        }
-    }
-
-    private var stockValueLabel: String {
-        let total = vm.filteredItems
-            .compactMap { extractMarketPrice(from: $0) ?? $0.purchasePrice }
-            .reduce(0, +)
-        return String(format: "$%.2f total", total)
-    }
-
-    private var emptyState: some View {
-        VStack(spacing: Theme.Spacing.md) {
-            Image(systemName: "tray")
-                .font(.system(size: 48, weight: .thin))
-                .foregroundStyle(Theme.Colors.textTertiary)
-            Text("Nothing in stock")
-                .font(Theme.Typography.headline)
-                .foregroundStyle(Theme.Colors.textPrimary)
-            Text("Scan a card to log it")
-                .font(Theme.Typography.body)
-                .foregroundStyle(Theme.Colors.textSecondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
+// Shared row + sheet components used by TransactionsView and CardDetailView.
+// (Used to live in the deleted StockListView.swift.)
 
 // MARK: - Stock row
 
@@ -195,7 +94,7 @@ struct StockRow: View {
     }
 }
 
-// MARK: - Helpers to read embedded notes metadata
+// MARK: - Notes metadata helpers
 
 func extractMarketPrice(from item: LocalInventoryItem) -> Double? {
     guard let notes = item.notes else { return nil }

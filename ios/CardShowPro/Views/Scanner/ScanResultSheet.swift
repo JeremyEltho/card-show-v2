@@ -1,15 +1,17 @@
 import SwiftUI
 
 /// Shown when card scan confidence is 80-94% — vendor must confirm before logging.
+/// The vendor's pre-selected LogMode (buy/sell/trade) is already known, so we lock
+/// the action header instead of asking again.
 struct ScanResultSheet: View {
     let match: CardMatch
+    let logMode: LogMode
     let isAwaitingConfirmation: Bool
     let onConfirm: (Double?, String, String) -> Void
     let onReject: () -> Void
 
     @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedStatus = CardStatus.bought
     @State private var customPrice: String = ""
 
     private var displayPrice: String {
@@ -72,26 +74,28 @@ struct ScanResultSheet: View {
                         }
                     }
 
-                    // Buy / Sell toggle — segmented control
-                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                        Text("ACTION")
+                    // Locked-mode header — vendor already picked Buy/Sell/Trade upstream
+                    HStack(spacing: Theme.Spacing.sm) {
+                        Image(systemName: logMode.icon)
+                            .font(.system(size: 18, weight: .bold))
+                        Text("\(logMode.title) MODE")
                             .font(Theme.Typography.label)
-                            .tracking(1)
-                            .foregroundStyle(Theme.Colors.textTertiary)
-
-                        HStack(spacing: 0) {
-                            actionButton("BUY", status: .bought, tint: Theme.Colors.blue)
-                            actionButton("SELL", status: .sold, tint: Theme.Colors.green)
-                        }
-                        .background(
-                            RoundedRectangle(cornerRadius: Theme.Radius.md)
-                                .fill(Theme.Colors.surface)
-                        )
+                            .tracking(2)
+                        Spacer()
+                        Text(logMode.subtitle)
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(.black.opacity(0.7))
                     }
+                    .padding(Theme.Spacing.md)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.Radius.md)
+                            .fill(logMode.tint)
+                    )
+                    .foregroundStyle(.black)
 
-                    // Price input
+                    // Price input — label adapts to the mode
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                        Text(selectedStatus == .bought ? "PAID" : "SOLD FOR")
+                        Text(priceLabel)
                             .font(Theme.Typography.label)
                             .tracking(1)
                             .foregroundStyle(Theme.Colors.textTertiary)
@@ -102,7 +106,7 @@ struct ScanResultSheet: View {
                             TextField("0.00", text: $customPrice)
                                 .keyboardType(.decimalPad)
                                 .font(Theme.Typography.priceLg)
-                                .foregroundStyle(selectedStatus == .bought ? Theme.Colors.blue : Theme.Colors.green)
+                                .foregroundStyle(logMode.tint)
                         }
                         .padding(Theme.Spacing.md)
                         .background(
@@ -114,15 +118,15 @@ struct ScanResultSheet: View {
                     // Log button — primary action
                     Button {
                         let price = Double(customPrice) ?? match.marketPrice
-                        onConfirm(price, "near_mint", selectedStatus.rawValue)
+                        onConfirm(price, "near_mint", logMode.inventoryStatus)
                         dismiss()
                     } label: {
-                        Text("LOG \(selectedStatus == .bought ? "BUY" : "SELL")")
+                        Text("LOG \(logMode.title)")
                             .font(Theme.Typography.title)
                             .tracking(2)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
-                            .background(Theme.Colors.amber)
+                            .background(logMode.tint)
                             .foregroundStyle(.black)
                             .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg))
                     }
@@ -170,23 +174,11 @@ struct ScanResultSheet: View {
         }
     }
 
-    private func actionButton(_ label: String, status: CardStatus, tint: Color) -> some View {
-        Button {
-            selectedStatus = status
-        } label: {
-            Text(label)
-                .font(Theme.Typography.label)
-                .tracking(2)
-                .frame(maxWidth: .infinity)
-                .frame(height: 48)
-                .background(selectedStatus == status ? tint.opacity(0.2) : Color.clear)
-                .foregroundStyle(selectedStatus == status ? tint : Theme.Colors.textTertiary)
-                .overlay(
-                    RoundedRectangle(cornerRadius: Theme.Radius.md)
-                        .stroke(selectedStatus == status ? tint : Color.clear, lineWidth: 1.5)
-                )
+    private var priceLabel: String {
+        switch logMode {
+        case .buy:   return "PAID"
+        case .sell:  return "SOLD FOR"
+        case .trade: return "VALUE (FOR YOUR RECORDS)"
         }
-        .buttonStyle(.plain)
-        .padding(2)
     }
 }

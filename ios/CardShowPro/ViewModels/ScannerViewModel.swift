@@ -29,6 +29,10 @@ final class ScannerViewModel: CardScannerDelegate {
     var lastLoggedCard: LocalInventoryItem?
     var undoAvailable = false
 
+    /// Vendor action context — controls the default status when logging a scan,
+    /// and what the ScanResultSheet pre-selects. Set by the calling view.
+    var logMode: LogMode = .buy
+
     private let scannerService = CardScannerService()
 
     // MARK: - Camera
@@ -68,9 +72,9 @@ final class ScannerViewModel: CardScannerDelegate {
         let confidence = match.confidence
 
         if confidence >= 0.95 {
-            // Auto-confirm: log immediately
+            // Auto-confirm: log immediately using the current mode (buy/sell/trade)
             scanState = .autoConfirmed(match)
-            await logCard(match, auto: true)
+            await logCard(match, status: logMode.inventoryStatus, auto: true)
             undoAvailable = true
             // Reset after 3 seconds
             try? await Task.sleep(for: .seconds(3))

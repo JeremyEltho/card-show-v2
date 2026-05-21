@@ -23,7 +23,7 @@ struct CardShowProApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
+            HomeView()
                 .environment(appState)
                 .preferredColorScheme(.dark)
         }
