@@ -11,12 +11,7 @@ struct ScannerView: View {
             CameraPreviewView(layer: vm.previewLayer)
                 .ignoresSafeArea()
 
-            // Dark overlay outside the card frame
-            Color.black.opacity(0.30)
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-
-            // Card detection overlay with confidence-coloured border
+            // Card guide frame with dimmed surround + detection overlay
             CardOverlayView(cardRect: vm.cardOverlayRect, scanState: vm.scanState)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
