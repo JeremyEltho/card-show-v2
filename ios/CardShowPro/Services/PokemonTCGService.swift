@@ -14,9 +14,21 @@ actor PokemonTCGService {
     private let decoder: JSONDecoder
     private let baseURL = "https://api.pokemontcg.io/v2"
 
-    // Lightweight in-memory cache (card name → result) to avoid duplicate API calls
-    // within a session. Cards rarely change, so re-querying within one app run is wasteful.
-    private var cache: [String: CardMatch] = [:]
+    /// Bounded in-memory cache (card name → result) so we don't hammer the
+    /// API for cards the vendor has already scanned in this session. NSCache
+    /// auto-purges under memory pressure; the count limit keeps the working
+    /// set reasonable on long sessions.
+    private let cache: NSCache<NSString, CachedMatch> = {
+        let c = NSCache<NSString, CachedMatch>()
+        c.countLimit = 200
+        return c
+    }()
+
+    /// NSCache requires class-typed values, so we wrap the CardMatch struct.
+    private final class CachedMatch {
+        let match: CardMatch
+        init(_ match: CardMatch) { self.match = match }
+    }
 
     private init() {
         let config = URLSessionConfiguration.default
@@ -29,8 +41,8 @@ actor PokemonTCGService {
     /// Look up a card by name. Returns the best match with metadata + market price.
     /// Returns nil if the API is unreachable or no card found.
     func lookup(name: String) async -> CardMatch? {
-        let key = name.lowercased()
-        if let cached = cache[key] { return cached }
+        let key = name.lowercased() as NSString
+        if let cached = cache.object(forKey: key) { return cached.match }
 
         // Build query: name search with prefix wildcard
         let encoded = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? name
@@ -61,7 +73,7 @@ actor PokemonTCGService {
                 marketPrice: extractMarketPrice(firstCard.tcgplayer?.prices),
                 pipeline: "pokemontcg_api"
             )
-            cache[key] = match
+            cache.setObject(CachedMatch(match), forKey: key)
             return match
         } catch {
             return nil

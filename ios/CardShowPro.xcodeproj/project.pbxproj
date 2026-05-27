@@ -12,6 +12,7 @@
 		037E079A8B3891C486FFCF4C /* ScanSuccessOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51161787FA992BA71AD02E21 /* ScanSuccessOverlay.swift */; };
 		0AAA70EE3DFC26400CA31706 /* InventoryRowComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713B17685D0BD6EFE4978503 /* InventoryRowComponents.swift */; };
 		13C3D402FF40135E9B7F7B80 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1329EC686BAC7220286D2C /* HomeView.swift */; };
+		1CA82469E4B5014429088849 /* CardBackPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A620D6F7011C0CAC029A88 /* CardBackPattern.swift */; };
 		1D4B574C683037DBF0D21C73 /* InventoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56CE66AC80FA7D040CBF4148 /* InventoryViewModel.swift */; };
 		2C7276F46713E31B0F7E6DF7 /* PokemonTCGService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5917B5114DF17FCDE0FC063 /* PokemonTCGService.swift */; };
 		2E741460D8259E0F0E8AD301 /* ImagePreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0290E039E0B742202C714C57 /* ImagePreprocessor.swift */; };
@@ -27,24 +28,40 @@
 		7FA48FDFA3528ADBC6FD6FB3 /* pokemon_names.json in Resources */ = {isa = PBXBuildFile; fileRef = DFD61E7089AA75AB55DC657A /* pokemon_names.json */; };
 		8970480BD80D8B83B949A91D /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242326453AD69FE234134B1D /* DashboardViewModel.swift */; };
 		8A7986B339568639CFBBF857 /* LogMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0045D5EB0680C17DD88513D0 /* LogMode.swift */; };
+		96C0C1C0A711B8FD6966198B /* HoloShimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4934311C6F41153BD7C61C4E /* HoloShimmer.swift */; };
+		AA01000000000000000001E1 /* ReceiptExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000000000001E2 /* ReceiptExporter.swift */; };
+		AA02000000000000000002E1 /* TransactionReceipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000000000000000002E2 /* TransactionReceipt.swift */; };
+		AA04000000000000000004E1 /* CardImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA04000000000000000004E2 /* CardImageStore.swift */; };
+		AA05000000000000000005E1 /* ReceiptMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA05000000000000000005E2 /* ReceiptMode.swift */; };
+		AA06000000000000000006E1 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA06000000000000000006E2 /* AppSettings.swift */; };
+		AA07000000000000000007E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA07000000000000000007E2 /* SettingsView.swift */; };
+		AA09000000000000000009E1 /* PokeballMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA09000000000000000009E2 /* PokeballMark.swift */; };
+		AA0A00000000000000000AE1 /* PokemonCardFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A00000000000000000AE2 /* PokemonCardFrame.swift */; };
+		AA0B00000000000000000BE1 /* PokeballPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0B00000000000000000BE2 /* PokeballPattern.swift */; };
+		AA0C00000000000000000CE1 /* TradeSummarySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C00000000000000000CE2 /* TradeSummarySheet.swift */; };
+		AA0D00000000000000000DE1 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0D00000000000000000DE2 /* CachedAsyncImage.swift */; };
 		ABD71B3C94A008729E21F2E8 /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FB4A5BAE8756A57EFC7CB6 /* TransactionsView.swift */; };
 		C54580B17A4B0F581B49E704 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1DDE2A32ABFD954DB06E92 /* Theme.swift */; };
 		C6B8B6EB90A0AA09FD48101B /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65007C53901C1C561B94C56 /* Card.swift */; };
 		D7AD28CA87E7B15D3E3A06F9 /* ScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93D3361B35CA6F929808299 /* ScannerViewModel.swift */; };
 		E749868FAFDF3FFF1894EB13 /* CardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E52FFB30238593F591047 /* CardDetailView.swift */; };
 		FA9E1C3798B6EDFE2CADA641 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C85B764F8A92D1954812C7 /* ScannerView.swift */; };
+		FB34017A8DEC8738EEB1452E /* PriceTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1489EB9B165D4F3C2ECB9EA7 /* PriceTag.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0045D5EB0680C17DD88513D0 /* LogMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogMode.swift; sourceTree = "<group>"; };
+		01A620D6F7011C0CAC029A88 /* CardBackPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardBackPattern.swift; sourceTree = "<group>"; };
 		021CA7FC1CE69CC4B1FFA643 /* FuzzyMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuzzyMatcher.swift; sourceTree = "<group>"; };
 		0290E039E0B742202C714C57 /* ImagePreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreprocessor.swift; sourceTree = "<group>"; };
 		050F5D347F455D755B78D1B5 /* CardShowProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardShowProApp.swift; sourceTree = "<group>"; };
+		1489EB9B165D4F3C2ECB9EA7 /* PriceTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceTag.swift; sourceTree = "<group>"; };
 		235E52FFB30238593F591047 /* CardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailView.swift; sourceTree = "<group>"; };
 		242326453AD69FE234134B1D /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		319BA377685C10256A018D89 /* ScanResultSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanResultSheet.swift; sourceTree = "<group>"; };
 		3E902078208F82D4C37342BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		43EB3D943EBB8B1ABCAB214A /* CardOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardOverlayView.swift; sourceTree = "<group>"; };
+		4934311C6F41153BD7C61C4E /* HoloShimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoloShimmer.swift; sourceTree = "<group>"; };
 		51161787FA992BA71AD02E21 /* ScanSuccessOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanSuccessOverlay.swift; sourceTree = "<group>"; };
 		5474E1C5FAD61BFD15F0684C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		56CE66AC80FA7D040CBF4148 /* InventoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryViewModel.swift; sourceTree = "<group>"; };
@@ -54,6 +71,17 @@
 		8A6F25E925850E2A9B89D5F4 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		9648CDBD35FFC36962D315A6 /* SwiftDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModels.swift; sourceTree = "<group>"; };
 		A65007C53901C1C561B94C56 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		AA01000000000000000001E2 /* ReceiptExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptExporter.swift; sourceTree = "<group>"; };
+		AA02000000000000000002E2 /* TransactionReceipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionReceipt.swift; sourceTree = "<group>"; };
+		AA04000000000000000004E2 /* CardImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageStore.swift; sourceTree = "<group>"; };
+		AA05000000000000000005E2 /* ReceiptMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptMode.swift; sourceTree = "<group>"; };
+		AA06000000000000000006E2 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		AA07000000000000000007E2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AA09000000000000000009E2 /* PokeballMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeballMark.swift; sourceTree = "<group>"; };
+		AA0A00000000000000000AE2 /* PokemonCardFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonCardFrame.swift; sourceTree = "<group>"; };
+		AA0B00000000000000000BE2 /* PokeballPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeballPattern.swift; sourceTree = "<group>"; };
+		AA0C00000000000000000CE2 /* TradeSummarySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeSummarySheet.swift; sourceTree = "<group>"; };
+		AA0D00000000000000000DE2 /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedAsyncImage.swift; sourceTree = "<group>"; };
 		B2C85B764F8A92D1954812C7 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
 		B6919D3D6F8936A6C757EDA2 /* LogActionPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogActionPickerView.swift; sourceTree = "<group>"; };
 		B8AF4C0E0251694361912255 /* InventoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryService.swift; sourceTree = "<group>"; };
@@ -63,7 +91,7 @@
 		D93D3361B35CA6F929808299 /* ScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewModel.swift; sourceTree = "<group>"; };
 		DFD61E7089AA75AB55DC657A /* pokemon_names.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = pokemon_names.json; sourceTree = "<group>"; };
 		EC1329EC686BAC7220286D2C /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		F6394B35D189E16247EBA2E8 /* CardShowPro.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CardShowPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6394B35D189E16247EBA2E8 /* CardShowPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardShowPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -72,6 +100,7 @@
 			children = (
 				B6919D3D6F8936A6C757EDA2 /* LogActionPickerView.swift */,
 				0045D5EB0680C17DD88513D0 /* LogMode.swift */,
+				AA05000000000000000005E2 /* ReceiptMode.swift */,
 			);
 			path = Log;
 			sourceTree = "<group>";
@@ -87,8 +116,11 @@
 		1817D03C104724695FEAC286 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				AA0D00000000000000000DE2 /* CachedAsyncImage.swift */,
+				AA04000000000000000004E2 /* CardImageStore.swift */,
 				021CA7FC1CE69CC4B1FFA643 /* FuzzyMatcher.swift */,
 				0290E039E0B742202C714C57 /* ImagePreprocessor.swift */,
+				AA01000000000000000001E2 /* ReceiptExporter.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -139,6 +171,7 @@
 		728C832FBEDB2EE97FF95A4A /* App */ = {
 			isa = PBXGroup;
 			children = (
+				AA06000000000000000006E2 /* AppSettings.swift */,
 				6DB6EDB0AEA91337C26291B2 /* AppState.swift */,
 				050F5D347F455D755B78D1B5 /* CardShowProApp.swift */,
 			);
@@ -152,6 +185,7 @@
 				B2C85B764F8A92D1954812C7 /* ScannerView.swift */,
 				319BA377685C10256A018D89 /* ScanResultSheet.swift */,
 				51161787FA992BA71AD02E21 /* ScanSuccessOverlay.swift */,
+				AA0C00000000000000000CE2 /* TradeSummarySheet.swift */,
 			);
 			path = Scanner;
 			sourceTree = "<group>";
@@ -185,9 +219,23 @@
 		A90939CEE6FAA1E9730BB4D3 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
+				01A620D6F7011C0CAC029A88 /* CardBackPattern.swift */,
+				4934311C6F41153BD7C61C4E /* HoloShimmer.swift */,
+				AA09000000000000000009E2 /* PokeballMark.swift */,
+				AA0B00000000000000000BE2 /* PokeballPattern.swift */,
+				AA0A00000000000000000AE2 /* PokemonCardFrame.swift */,
+				1489EB9B165D4F3C2ECB9EA7 /* PriceTag.swift */,
 				CE1DDE2A32ABFD954DB06E92 /* Theme.swift */,
 			);
 			path = Theme;
+			sourceTree = "<group>";
+		};
+		AA03000000000000000003E0 /* Receipt */ = {
+			isa = PBXGroup;
+			children = (
+				AA02000000000000000002E2 /* TransactionReceipt.swift */,
+			);
+			path = Receipt;
 			sourceTree = "<group>";
 		};
 		D75C88D5E8706EEC438946C4 /* CardShowPro */ = {
@@ -231,10 +279,20 @@
 				5E11398240AC181B37A175AB /* Inventory */,
 				020A4ECE68EB5B69E8839B0C /* Log */,
 				793DDFA22C316AEDB754ADFC /* Profile */,
+				AA03000000000000000003E0 /* Receipt */,
 				76C9B5DA8BD118BFD72B68CC /* Scanner */,
+				AA08000000000000000008E0 /* Settings */,
 				36C922312865FADAC129F40F /* Transactions */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		AA08000000000000000008E0 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				AA07000000000000000007E2 /* SettingsView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -268,7 +326,6 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					5C3BA9BDC0CBDB8E1941E538 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -311,12 +368,14 @@
 			files = (
 				02854EC4971BC567B877E97F /* AppState.swift in Sources */,
 				C6B8B6EB90A0AA09FD48101B /* Card.swift in Sources */,
+				1CA82469E4B5014429088849 /* CardBackPattern.swift in Sources */,
 				E749868FAFDF3FFF1894EB13 /* CardDetailView.swift in Sources */,
 				4DE20463FFE1D9BF04BEDF63 /* CardOverlayView.swift in Sources */,
 				4860E737A51275FEE88C84D4 /* CardScannerService.swift in Sources */,
 				3552B4EF452BF020E533ACD4 /* CardShowProApp.swift in Sources */,
 				8970480BD80D8B83B949A91D /* DashboardViewModel.swift in Sources */,
 				68240037AF8A34F43AE18440 /* FuzzyMatcher.swift in Sources */,
+				96C0C1C0A711B8FD6966198B /* HoloShimmer.swift in Sources */,
 				13C3D402FF40135E9B7F7B80 /* HomeView.swift in Sources */,
 				2E741460D8259E0F0E8AD301 /* ImagePreprocessor.swift in Sources */,
 				0AAA70EE3DFC26400CA31706 /* InventoryRowComponents.swift in Sources */,
@@ -325,7 +384,19 @@
 				36449DD7234FB588FE8019BF /* LogActionPickerView.swift in Sources */,
 				8A7986B339568639CFBBF857 /* LogMode.swift in Sources */,
 				2C7276F46713E31B0F7E6DF7 /* PokemonTCGService.swift in Sources */,
+				FB34017A8DEC8738EEB1452E /* PriceTag.swift in Sources */,
 				73D3B73194672AC0DA42664B /* ProfileView.swift in Sources */,
+				AA04000000000000000004E1 /* CardImageStore.swift in Sources */,
+				AA05000000000000000005E1 /* ReceiptMode.swift in Sources */,
+				AA06000000000000000006E1 /* AppSettings.swift in Sources */,
+				AA07000000000000000007E1 /* SettingsView.swift in Sources */,
+				AA09000000000000000009E1 /* PokeballMark.swift in Sources */,
+				AA0A00000000000000000AE1 /* PokemonCardFrame.swift in Sources */,
+				AA0B00000000000000000BE1 /* PokeballPattern.swift in Sources */,
+				AA0C00000000000000000CE1 /* TradeSummarySheet.swift in Sources */,
+				AA0D00000000000000000DE1 /* CachedAsyncImage.swift in Sources */,
+				AA01000000000000000001E1 /* ReceiptExporter.swift in Sources */,
+				AA02000000000000000002E1 /* TransactionReceipt.swift in Sources */,
 				7855CFA3B1E8FE09001A219E /* ScanResultSheet.swift in Sources */,
 				037E079A8B3891C486FFCF4C /* ScanSuccessOverlay.swift in Sources */,
 				FA9E1C3798B6EDFE2CADA641 /* ScannerView.swift in Sources */,
@@ -344,6 +415,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = F87457F436;
 				INFOPLIST_FILE = CardShowPro/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -492,6 +564,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = F87457F436;
 				INFOPLIST_FILE = CardShowPro/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
