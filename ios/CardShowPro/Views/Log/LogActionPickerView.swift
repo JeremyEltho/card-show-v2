@@ -1,8 +1,12 @@
 import SwiftUI
 
 /// Pushed after tapping LOG on the home view. User picks Buy / Sell / Trade,
-/// which then opens the Scanner in that mode.
+/// chooses receipt mode (with receipt vs fast/no receipt), then opens the
+/// scanner. Receipt mode is sticky for the navigation push.
 struct LogActionPickerView: View {
+    @State private var settings = AppSettings.shared
+    @State private var receiptMode: ReceiptMode = AppSettings.shared.defaultReceiptMode
+
     var body: some View {
         ZStack {
             Theme.Colors.bg.ignoresSafeArea()
@@ -21,7 +25,9 @@ struct LogActionPickerView: View {
 
                 VStack(spacing: Theme.Spacing.md) {
                     ForEach(LogMode.allCases) { mode in
-                        NavigationLink(destination: ScannerView(logMode: mode)) {
+                        NavigationLink(
+                            destination: ScannerView(logMode: mode, receiptMode: receiptMode)
+                        ) {
                             ModeButton(mode: mode)
                         }
                     }
@@ -29,6 +35,10 @@ struct LogActionPickerView: View {
                 .padding(.horizontal, Theme.Spacing.lg)
 
                 Spacer()
+
+                receiptModePicker
+                    .padding(.horizontal, Theme.Spacing.lg)
+                    .padding(.bottom, Theme.Spacing.lg)
             }
         }
         .navigationTitle("Log")
@@ -36,6 +46,61 @@ struct LogActionPickerView: View {
         .toolbarBackground(Theme.Colors.bg, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
+    }
+
+    // MARK: - Receipt mode picker
+
+    private var receiptModePicker: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("SCAN MODE")
+                .font(Theme.Typography.label)
+                .tracking(2)
+                .foregroundStyle(Theme.Colors.textTertiary)
+
+            HStack(spacing: Theme.Spacing.sm) {
+                ForEach(ReceiptMode.allCases) { mode in
+                    Button {
+                        receiptMode = mode
+                    } label: {
+                        ReceiptModeChip(mode: mode, selected: receiptMode == mode)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            Text(receiptMode.subtitle)
+                .font(Theme.Typography.caption)
+                .foregroundStyle(Theme.Colors.textSecondary)
+                .padding(.top, 2)
+        }
+    }
+}
+
+private struct ReceiptModeChip: View {
+    let mode: ReceiptMode
+    let selected: Bool
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: mode.icon)
+                .font(.system(size: 13, weight: .heavy))
+            Text(mode.title)
+                .font(Theme.Typography.label)
+                .tracking(1.5)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 44)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.Radius.md, style: .continuous)
+                .fill(selected ? mode.tint : Color.clear)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.Radius.md, style: .continuous)
+                        .stroke(selected ? mode.tint : Theme.Colors.border,
+                                style: StrokeStyle(lineWidth: 1.5,
+                                                   dash: selected ? [] : [4, 3]))
+                )
+        )
+        .foregroundStyle(selected ? .black : Theme.Colors.textSecondary)
     }
 }
 
