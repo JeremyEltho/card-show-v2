@@ -24,6 +24,8 @@
 	<string>CardShow Pro uses your camera to identify trading cards in real time.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>CardShow Pro can save card images to your photo library.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>CardShow Pro saves transaction receipts to your photo library so you can keep records of buys, sells, and trades.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

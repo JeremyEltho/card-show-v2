@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Fullscreen success overlay shown after a successful scan + log.
 /// Vendor picks one of three actions:
@@ -11,6 +12,13 @@ struct ScanSuccessOverlay: View {
     let onDone: () -> Void
     let onScanAnother: () -> Void
     let onUndo: () -> Void
+
+    @State private var receiptState: ReceiptState = .idle
+    @State private var includeImageInReceipt: Bool = true
+
+    private enum ReceiptState: Equatable {
+        case idle, saving, saved, failed(String)
+    }
 
     var body: some View {
         ZStack {
@@ -52,7 +60,8 @@ struct ScanSuccessOverlay: View {
 
                 Spacer()
 
-                // Three actions stacked vertically — DONE is biggest (primary)
+                // Action stack — SCAN ANOTHER is primary, RECEIPT is the
+                // optional vendor-record step, DONE / UNDO are secondary.
                 VStack(spacing: Theme.Spacing.sm) {
                     Button(action: onScanAnother) {
                         Label("SCAN ANOTHER", systemImage: "viewfinder")
@@ -64,6 +73,9 @@ struct ScanSuccessOverlay: View {
                             .foregroundStyle(.black)
                             .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg))
                     }
+
+                    imageToggleRow
+                    receiptButton
 
                     Button(action: onDone) {
                         Text("DONE")
@@ -89,6 +101,120 @@ struct ScanSuccessOverlay: View {
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
                 .padding(.bottom, Theme.Spacing.xl)
+            }
+        }
+    }
+
+    // MARK: - Receipt
+
+    private var imageToggleRow: some View {
+        Button {
+            includeImageInReceipt.toggle()
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            // Re-allow a save if the user changes their mind after a save
+            if case .saved = receiptState { receiptState = .idle }
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: includeImageInReceipt ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 16, weight: .heavy))
+                Text("INCLUDE CARD IMAGE")
+                    .font(Theme.Typography.label)
+                    .tracking(1.5)
+                Spacer()
+            }
+            .padding(.horizontal, 4)
+            .padding(.vertical, 2)
+            .foregroundStyle(includeImageInReceipt
+                             ? Theme.Colors.amber
+                             : Theme.Colors.textTertiary)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var receiptButton: some View {
+        Button(action: saveReceipt) {
+            HStack(spacing: 8) {
+                Image(systemName: receiptIcon)
+                    .font(.system(size: 16, weight: .heavy))
+                Text(receiptLabel)
+                    .font(Theme.Typography.label)
+                    .tracking(2)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.Radius.lg)
+                    .fill(receiptBg)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.Radius.lg)
+                            .stroke(receiptStroke,
+                                    style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                    )
+            )
+            .foregroundStyle(receiptFg)
+        }
+        .disabled(item == nil || receiptState == .saving || receiptState == .saved)
+    }
+
+    private var receiptIcon: String {
+        switch receiptState {
+        case .idle:    return "doc.text"
+        case .saving:  return "ellipsis"
+        case .saved:   return "checkmark.seal.fill"
+        case .failed:  return "exclamationmark.triangle.fill"
+        }
+    }
+
+    private var receiptLabel: String {
+        switch receiptState {
+        case .idle:    return "SAVE RECEIPT"
+        case .saving:  return "SAVING…"
+        case .saved:   return "SAVED TO PHOTOS"
+        case .failed:  return "TRY AGAIN"
+        }
+    }
+
+    private var receiptBg: Color {
+        switch receiptState {
+        case .saved:    return Theme.Colors.greenSoft
+        case .failed:   return Theme.Colors.redSoft
+        default:        return Theme.Colors.amberSoft
+        }
+    }
+
+    private var receiptStroke: Color {
+        switch receiptState {
+        case .saved:    return Theme.Colors.green
+        case .failed:   return Theme.Colors.red
+        default:        return Theme.Colors.amber
+        }
+    }
+
+    private var receiptFg: Color {
+        switch receiptState {
+        case .saved:    return Theme.Colors.green
+        case .failed:   return Theme.Colors.red
+        default:        return Theme.Colors.amber
+        }
+    }
+
+    private func saveReceipt() {
+        guard let item, receiptState != .saving else { return }
+        receiptState = .saving
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+
+        Task { @MainActor in
+            do {
+                _ = try await ReceiptExporter.save(item: item,
+                                                   includeImage: includeImageInReceipt)
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                receiptState = .saved
+            } catch {
+                UINotificationFeedbackGenerator().notificationOccurred(.error)
+                receiptState = .failed(error.localizedDescription)
+                // Roll back to idle so the user can retry after a beat.
+                try? await Task.sleep(for: .seconds(2))
+                if case .failed = receiptState { receiptState = .idle }
             }
         }
     }
