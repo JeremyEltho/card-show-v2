@@ -13,7 +13,7 @@ iOS-only Pokémon card scanning + inventory app. Runs entirely on-device — no 
 ```bash
 git clone https://github.com/JeremyEltho/card-show-v2-ios.git
 cd card-show-v2-ios
-open ios/CardShowPro.xcodeproj
+open v2-ios/CardShowPro.xcodeproj
 ```
 
 In Xcode:
@@ -28,7 +28,7 @@ In Xcode:
 
 | Path | What it is |
 |---|---|
-| `ios/` | SwiftUI app — camera scanner, on-device fuzzy match, SwiftData inventory, receipt export |
+| `v2-ios/` | SwiftUI app — camera scanner, on-device fuzzy match, SwiftData inventory, receipt export |
 | `docs/ARCHITECTURE.md` | As-built architecture doc (scanner pipeline, state machine, persistence layer) |
 | `tools/generate_icon.swift` | Regenerates the 1024×1024 app icon (run `swift tools/generate_icon.swift`) |
 

@@ -4,7 +4,7 @@
 // Run from the repo root:
 //   swift tools/generate_icon.swift
 // Output:
-//   ios/CardShowPro/Resources/Assets.xcassets/AppIcon.appiconset/icon-1024.png
+//   v2-ios/CardShowPro/Resources/Assets.xcassets/AppIcon.appiconset/icon-1024.png
 
 import Foundation
 import CoreGraphics
@@ -175,7 +175,7 @@ ctx.restoreGState() // end tilt
 // ──────────────────────────────────────────────────────────
 guard let cgImage = ctx.makeImage() else { fatalError("Couldn't make image") }
 
-let outputPath = "ios/CardShowPro/Resources/Assets.xcassets/AppIcon.appiconset/icon-1024.png"
+let outputPath = "v2-ios/CardShowPro/Resources/Assets.xcassets/AppIcon.appiconset/icon-1024.png"
 let url = URL(fileURLWithPath: outputPath)
 guard let dest = CGImageDestinationCreateWithURL(
     url as CFURL,

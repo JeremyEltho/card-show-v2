@@ -1,6 +1,6 @@
 # CardShowPro — Architecture Document (As-Built)
 
-> Scope: ingestion path from camera frame → OCR → fuzzy match → state transition → SwiftData write. Derived strictly from the Swift source in `ios/CardShowPro/`.
+> Scope: ingestion path from camera frame → OCR → fuzzy match → state transition → SwiftData write. Derived strictly from the Swift source in `v2-ios/CardShowPro/`.
 
 ---
 
