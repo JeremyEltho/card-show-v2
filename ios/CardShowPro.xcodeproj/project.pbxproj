@@ -22,11 +22,9 @@
 		4860E737A51275FEE88C84D4 /* CardScannerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 574149CAD4D450217E2CA261 /* CardScannerService.swift */; };
 		4DE20463FFE1D9BF04BEDF63 /* CardOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EB3D943EBB8B1ABCAB214A /* CardOverlayView.swift */; };
 		68240037AF8A34F43AE18440 /* FuzzyMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021CA7FC1CE69CC4B1FFA643 /* FuzzyMatcher.swift */; };
-		73D3B73194672AC0DA42664B /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F25E925850E2A9B89D5F4 /* ProfileView.swift */; };
 		74508D7775131A71808C5A94 /* SwiftDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9648CDBD35FFC36962D315A6 /* SwiftDataModels.swift */; };
 		7855CFA3B1E8FE09001A219E /* ScanResultSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319BA377685C10256A018D89 /* ScanResultSheet.swift */; };
 		7FA48FDFA3528ADBC6FD6FB3 /* pokemon_names.json in Resources */ = {isa = PBXBuildFile; fileRef = DFD61E7089AA75AB55DC657A /* pokemon_names.json */; };
-		8970480BD80D8B83B949A91D /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242326453AD69FE234134B1D /* DashboardViewModel.swift */; };
 		8A7986B339568639CFBBF857 /* LogMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0045D5EB0680C17DD88513D0 /* LogMode.swift */; };
 		96C0C1C0A711B8FD6966198B /* HoloShimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4934311C6F41153BD7C61C4E /* HoloShimmer.swift */; };
 		AA01000000000000000001E1 /* ReceiptExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000000000001E2 /* ReceiptExporter.swift */; };
@@ -57,7 +55,6 @@
 		050F5D347F455D755B78D1B5 /* CardShowProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardShowProApp.swift; sourceTree = "<group>"; };
 		1489EB9B165D4F3C2ECB9EA7 /* PriceTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceTag.swift; sourceTree = "<group>"; };
 		235E52FFB30238593F591047 /* CardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailView.swift; sourceTree = "<group>"; };
-		242326453AD69FE234134B1D /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		319BA377685C10256A018D89 /* ScanResultSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanResultSheet.swift; sourceTree = "<group>"; };
 		3E902078208F82D4C37342BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		43EB3D943EBB8B1ABCAB214A /* CardOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardOverlayView.swift; sourceTree = "<group>"; };
@@ -68,7 +65,6 @@
 		574149CAD4D450217E2CA261 /* CardScannerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardScannerService.swift; sourceTree = "<group>"; };
 		6DB6EDB0AEA91337C26291B2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		713B17685D0BD6EFE4978503 /* InventoryRowComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryRowComponents.swift; sourceTree = "<group>"; };
-		8A6F25E925850E2A9B89D5F4 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		9648CDBD35FFC36962D315A6 /* SwiftDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModels.swift; sourceTree = "<group>"; };
 		A65007C53901C1C561B94C56 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		AA01000000000000000001E2 /* ReceiptExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptExporter.swift; sourceTree = "<group>"; };
@@ -95,107 +91,12 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		020A4ECE68EB5B69E8839B0C /* Log */ = {
-			isa = PBXGroup;
-			children = (
-				B6919D3D6F8936A6C757EDA2 /* LogActionPickerView.swift */,
-				0045D5EB0680C17DD88513D0 /* LogMode.swift */,
-				AA05000000000000000005E2 /* ReceiptMode.swift */,
-			);
-			path = Log;
-			sourceTree = "<group>";
-		};
-		16F857584A1FE0A44291297D /* Persistence */ = {
-			isa = PBXGroup;
-			children = (
-				9648CDBD35FFC36962D315A6 /* SwiftDataModels.swift */,
-			);
-			path = Persistence;
-			sourceTree = "<group>";
-		};
-		1817D03C104724695FEAC286 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				AA0D00000000000000000DE2 /* CachedAsyncImage.swift */,
-				AA04000000000000000004E2 /* CardImageStore.swift */,
-				021CA7FC1CE69CC4B1FFA643 /* FuzzyMatcher.swift */,
-				0290E039E0B742202C714C57 /* ImagePreprocessor.swift */,
-				AA01000000000000000001E2 /* ReceiptExporter.swift */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
-		36C922312865FADAC129F40F /* Transactions */ = {
-			isa = PBXGroup;
-			children = (
-				713B17685D0BD6EFE4978503 /* InventoryRowComponents.swift */,
-				D3FB4A5BAE8756A57EFC7CB6 /* TransactionsView.swift */,
-			);
-			path = Transactions;
-			sourceTree = "<group>";
-		};
-		42A55D9FE65937A2C38449BD /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				5474E1C5FAD61BFD15F0684C /* Assets.xcassets */,
-				3E902078208F82D4C37342BF /* Info.plist */,
-				DFD61E7089AA75AB55DC657A /* pokemon_names.json */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		44729C653391FFE3F83A805F /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				EC1329EC686BAC7220286D2C /* HomeView.swift */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
 		5521DA4A36CD109DBE31CA05 = {
 			isa = PBXGroup;
 			children = (
 				D75C88D5E8706EEC438946C4 /* CardShowPro */,
 				82F62BA34F8CF97A95C31DC8 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		5E11398240AC181B37A175AB /* Inventory */ = {
-			isa = PBXGroup;
-			children = (
-				235E52FFB30238593F591047 /* CardDetailView.swift */,
-			);
-			path = Inventory;
-			sourceTree = "<group>";
-		};
-		728C832FBEDB2EE97FF95A4A /* App */ = {
-			isa = PBXGroup;
-			children = (
-				AA06000000000000000006E2 /* AppSettings.swift */,
-				6DB6EDB0AEA91337C26291B2 /* AppState.swift */,
-				050F5D347F455D755B78D1B5 /* CardShowProApp.swift */,
-			);
-			path = App;
-			sourceTree = "<group>";
-		};
-		76C9B5DA8BD118BFD72B68CC /* Scanner */ = {
-			isa = PBXGroup;
-			children = (
-				43EB3D943EBB8B1ABCAB214A /* CardOverlayView.swift */,
-				B2C85B764F8A92D1954812C7 /* ScannerView.swift */,
-				319BA377685C10256A018D89 /* ScanResultSheet.swift */,
-				51161787FA992BA71AD02E21 /* ScanSuccessOverlay.swift */,
-				AA0C00000000000000000CE2 /* TradeSummarySheet.swift */,
-			);
-			path = Scanner;
-			sourceTree = "<group>";
-		};
-		793DDFA22C316AEDB754ADFC /* Profile */ = {
-			isa = PBXGroup;
-			children = (
-				8A6F25E925850E2A9B89D5F4 /* ProfileView.swift */,
-			);
-			path = Profile;
 			sourceTree = "<group>";
 		};
 		82F62BA34F8CF97A95C31DC8 /* Products */ = {
@@ -206,93 +107,202 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		9B002344970B3C33B51A7EA7 /* ViewModels */ = {
+		D75C88D5E8706EEC438946C4 /* CardShowPro */ = {
 			isa = PBXGroup;
 			children = (
-				242326453AD69FE234134B1D /* DashboardViewModel.swift */,
-				56CE66AC80FA7D040CBF4148 /* InventoryViewModel.swift */,
-				D93D3361B35CA6F929808299 /* ScannerViewModel.swift */,
+				728C832FBEDB2EE97FF95A4A /* App */,
+				BB010000000000000001E0E1 /* Core */,
+				BB010000000000000007E0E7 /* Features */,
+				42A55D9FE65937A2C38449BD /* Resources */,
+				BB01000000000000000EE0EE /* Shared */,
 			);
-			path = ViewModels;
+			path = CardShowPro;
 			sourceTree = "<group>";
 		};
-		A90939CEE6FAA1E9730BB4D3 /* Theme */ = {
+		728C832FBEDB2EE97FF95A4A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				6DB6EDB0AEA91337C26291B2 /* AppState.swift */,
+				050F5D347F455D755B78D1B5 /* CardShowProApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		BB010000000000000001E0E1 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				BB010000000000000004E0E4 /* Matching */,
+				BB010000000000000006E0E6 /* Networking */,
+				BB010000000000000003E0E3 /* OCR */,
+				BB010000000000000005E0E5 /* Persistence */,
+				BB010000000000000002E0E2 /* Vision */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		BB010000000000000002E0E2 /* Vision */ = {
+			isa = PBXGroup;
+			children = (
+				574149CAD4D450217E2CA261 /* CardScannerService.swift */,
+			);
+			path = Vision;
+			sourceTree = "<group>";
+		};
+		BB010000000000000003E0E3 /* OCR */ = {
+			isa = PBXGroup;
+			children = (
+				0290E039E0B742202C714C57 /* ImagePreprocessor.swift */,
+			);
+			path = OCR;
+			sourceTree = "<group>";
+		};
+		BB010000000000000004E0E4 /* Matching */ = {
+			isa = PBXGroup;
+			children = (
+				021CA7FC1CE69CC4B1FFA643 /* FuzzyMatcher.swift */,
+			);
+			path = Matching;
+			sourceTree = "<group>";
+		};
+		BB010000000000000005E0E5 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				AA04000000000000000004E2 /* CardImageStore.swift */,
+				B8AF4C0E0251694361912255 /* InventoryService.swift */,
+				9648CDBD35FFC36962D315A6 /* SwiftDataModels.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		BB010000000000000006E0E6 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				A65007C53901C1C561B94C56 /* Card.swift */,
+				D5917B5114DF17FCDE0FC063 /* PokemonTCGService.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		BB010000000000000007E0E7 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				BB01000000000000000BE0EB /* History */,
+				BB01000000000000000DE0ED /* Home */,
+				BB010000000000000009E0E9 /* Inventory */,
+				BB010000000000000008E0E8 /* Scanner */,
+				BB01000000000000000CE0EC /* Settings */,
+				BB01000000000000000AE0EA /* Trades */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		BB010000000000000008E0E8 /* Scanner */ = {
+			isa = PBXGroup;
+			children = (
+				43EB3D943EBB8B1ABCAB214A /* CardOverlayView.swift */,
+				B6919D3D6F8936A6C757EDA2 /* LogActionPickerView.swift */,
+				0045D5EB0680C17DD88513D0 /* LogMode.swift */,
+				AA05000000000000000005E2 /* ReceiptMode.swift */,
+				319BA377685C10256A018D89 /* ScanResultSheet.swift */,
+				51161787FA992BA71AD02E21 /* ScanSuccessOverlay.swift */,
+				B2C85B764F8A92D1954812C7 /* ScannerView.swift */,
+				D93D3361B35CA6F929808299 /* ScannerViewModel.swift */,
+			);
+			path = Scanner;
+			sourceTree = "<group>";
+		};
+		BB010000000000000009E0E9 /* Inventory */ = {
+			isa = PBXGroup;
+			children = (
+				235E52FFB30238593F591047 /* CardDetailView.swift */,
+				56CE66AC80FA7D040CBF4148 /* InventoryViewModel.swift */,
+			);
+			path = Inventory;
+			sourceTree = "<group>";
+		};
+		BB01000000000000000AE0EA /* Trades */ = {
+			isa = PBXGroup;
+			children = (
+				AA0C00000000000000000CE2 /* TradeSummarySheet.swift */,
+			);
+			path = Trades;
+			sourceTree = "<group>";
+		};
+		BB01000000000000000BE0EB /* History */ = {
+			isa = PBXGroup;
+			children = (
+				713B17685D0BD6EFE4978503 /* InventoryRowComponents.swift */,
+				D3FB4A5BAE8756A57EFC7CB6 /* TransactionsView.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		BB01000000000000000CE0EC /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				AA06000000000000000006E2 /* AppSettings.swift */,
+				AA07000000000000000007E2 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		BB01000000000000000DE0ED /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EC1329EC686BAC7220286D2C /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		BB01000000000000000EE0EE /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				BB010000000000000011E0F1 /* Components */,
+				BB010000000000000010E0F0 /* Theme */,
+				BB01000000000000000FE0EF /* UI */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		BB01000000000000000FE0EF /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				AA0D00000000000000000DE2 /* CachedAsyncImage.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		BB010000000000000010E0F0 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
 				01A620D6F7011C0CAC029A88 /* CardBackPattern.swift */,
 				4934311C6F41153BD7C61C4E /* HoloShimmer.swift */,
-				AA09000000000000000009E2 /* PokeballMark.swift */,
-				AA0B00000000000000000BE2 /* PokeballPattern.swift */,
-				AA0A00000000000000000AE2 /* PokemonCardFrame.swift */,
-				1489EB9B165D4F3C2ECB9EA7 /* PriceTag.swift */,
 				CE1DDE2A32ABFD954DB06E92 /* Theme.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
 		};
-		AA03000000000000000003E0 /* Receipt */ = {
+		BB010000000000000011E0F1 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				AA09000000000000000009E2 /* PokeballMark.swift */,
+				AA0B00000000000000000BE2 /* PokeballPattern.swift */,
+				AA0A00000000000000000AE2 /* PokemonCardFrame.swift */,
+				1489EB9B165D4F3C2ECB9EA7 /* PriceTag.swift */,
+				AA01000000000000000001E2 /* ReceiptExporter.swift */,
 				AA02000000000000000002E2 /* TransactionReceipt.swift */,
 			);
-			path = Receipt;
+			path = Components;
 			sourceTree = "<group>";
 		};
-		D75C88D5E8706EEC438946C4 /* CardShowPro */ = {
+		42A55D9FE65937A2C38449BD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				728C832FBEDB2EE97FF95A4A /* App */,
-				DB4C8F705FD97587C4E66410 /* Models */,
-				16F857584A1FE0A44291297D /* Persistence */,
-				42A55D9FE65937A2C38449BD /* Resources */,
-				EDEBF8B1FA2576D095B8E504 /* Services */,
-				A90939CEE6FAA1E9730BB4D3 /* Theme */,
-				1817D03C104724695FEAC286 /* Utilities */,
-				9B002344970B3C33B51A7EA7 /* ViewModels */,
-				FA5241F6B1FA466DC246D3B8 /* Views */,
+				5474E1C5FAD61BFD15F0684C /* Assets.xcassets */,
+				3E902078208F82D4C37342BF /* Info.plist */,
+				DFD61E7089AA75AB55DC657A /* pokemon_names.json */,
 			);
-			path = CardShowPro;
-			sourceTree = "<group>";
-		};
-		DB4C8F705FD97587C4E66410 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				A65007C53901C1C561B94C56 /* Card.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		EDEBF8B1FA2576D095B8E504 /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				574149CAD4D450217E2CA261 /* CardScannerService.swift */,
-				B8AF4C0E0251694361912255 /* InventoryService.swift */,
-				D5917B5114DF17FCDE0FC063 /* PokemonTCGService.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
-		FA5241F6B1FA466DC246D3B8 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				44729C653391FFE3F83A805F /* Home */,
-				5E11398240AC181B37A175AB /* Inventory */,
-				020A4ECE68EB5B69E8839B0C /* Log */,
-				793DDFA22C316AEDB754ADFC /* Profile */,
-				AA03000000000000000003E0 /* Receipt */,
-				76C9B5DA8BD118BFD72B68CC /* Scanner */,
-				AA08000000000000000008E0 /* Settings */,
-				36C922312865FADAC129F40F /* Transactions */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		AA08000000000000000008E0 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				AA07000000000000000007E2 /* SettingsView.swift */,
-			);
-			path = Settings;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -373,7 +383,6 @@
 				4DE20463FFE1D9BF04BEDF63 /* CardOverlayView.swift in Sources */,
 				4860E737A51275FEE88C84D4 /* CardScannerService.swift in Sources */,
 				3552B4EF452BF020E533ACD4 /* CardShowProApp.swift in Sources */,
-				8970480BD80D8B83B949A91D /* DashboardViewModel.swift in Sources */,
 				68240037AF8A34F43AE18440 /* FuzzyMatcher.swift in Sources */,
 				96C0C1C0A711B8FD6966198B /* HoloShimmer.swift in Sources */,
 				13C3D402FF40135E9B7F7B80 /* HomeView.swift in Sources */,
@@ -385,7 +394,6 @@
 				8A7986B339568639CFBBF857 /* LogMode.swift in Sources */,
 				2C7276F46713E31B0F7E6DF7 /* PokemonTCGService.swift in Sources */,
 				FB34017A8DEC8738EEB1452E /* PriceTag.swift in Sources */,
-				73D3B73194672AC0DA42664B /* ProfileView.swift in Sources */,
 				AA04000000000000000004E1 /* CardImageStore.swift in Sources */,
 				AA05000000000000000005E1 /* ReceiptMode.swift in Sources */,
 				AA06000000000000000006E1 /* AppSettings.swift in Sources */,
